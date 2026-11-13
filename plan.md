@@ -196,3 +196,4 @@ The MVP is complete when:
 - External live SMS gateway subscriptions (e.g. Twilio) requiring credit.
 - Direct hardware integration with biometric time-clocks or turnstiles.
 - Web or mobile client frontends (desktop WinForms is the target).
+
