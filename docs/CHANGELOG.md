@@ -5,6 +5,21 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.5] - 2026-11-13
+
+### Added
+- **Management Reporting Controller (ReportController)**: Implemented specialized reporting and analytics generation covering Material Consumption, Labor Wage & Attendance Summaries, Stock Movement Audit Trails, and Cross-Project Executive Overviews.
+- **Reporting DTO Models**: Defined `MaterialConsumptionReportItem`, `LaborWageReportItem`, `StockMovementReportItem`, and `ProjectExecutiveSummary` in `SiteTrack.Core.Models`.
+- **RFC 4180 Compliant CSV Exporter (CsvExporter)**: Built robust CSV generator with proper quoting/escaping, column header mapping, and UTF-8 with BOM encoding for seamless Microsoft Excel compatibility on Windows.
+- **Paginated Print & PDF Report Engine (PrintReportHelper)**: Implemented a print engine using .NET `PrintDocument` and `PrintPreviewDialog` with landscape orientation, custom page headers, summary metadata, column width scaling, alternating row fills, and automatic page breaks.
+- **Desktop Reporting & Analytics Dashboard (UcReports)**:
+  - Interactive multi-report dashboard with project selector and date range filters (defaulting to comprehensive historical spans).
+  - Key metric summary cards dynamically updating per report (e.g., Total Spend, Consumed Quantity, Distinct Materials; Total Disbursed, Outstanding Balances, Present Headcount).
+  - Clean `DataGridView` rendering with currency, numeric, and date formatting.
+  - Action buttons for instant **Export to CSV** (with file dialog and auto-open prompt) and **Print / Preview PDF** (with native zoomable preview dialog).
+- **Main Shell Integration**: Connected navigation menu item `Reports & Export` to dynamically load `UcReports`.
+- **Expanded Automated Test Suite**: Added 8 automated tests to `SiteTrack.Tests` covering Material Consumption aggregation, Labor Wage balance tracking, Stock Movement history, Executive Summary KPI computation, Site Manager scoping enforcement, and CSV format/escape/BOM disk saving. Total test suite reached 70 passing tests with 100% success rate.
+
 ## [0.9.0] - 2026-11-13
 
 ### Added

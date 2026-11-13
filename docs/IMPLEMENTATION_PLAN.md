@@ -188,13 +188,13 @@ SiteTrack/
 - [x] Filter activity logs by project and date.
 
 ### Milestone 9: Reporting, Analytics & Data Export
-- [ ] Build `UcReports` with report selector and date range filters:
+- [x] Build `UcReports` with report selector and date range filters:
   - Material Consumption & Expenditure Report
   - Labor Wage & Attendance Summary Report
   - Stock Movement Audit Log Report
   - Cross-Project Executive Dashboard
-- [ ] Implement CSV export engine.
-- [ ] Implement PDF / printable document export engine.
+- [x] Implement CSV export engine.
+- [x] Implement PDF / printable document export engine.
 
 ### Milestone 10: Verification, Documentation & Release
 - [ ] Run automated tests verifying validation rules and calculations.

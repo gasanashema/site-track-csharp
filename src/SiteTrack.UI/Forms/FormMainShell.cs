@@ -314,6 +314,11 @@ namespace SiteTrack.UI.Forms
                 return new Controls.UcActivities();
             }
 
+            if (string.Equals(module, "Reports & Export", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Controls.UcReports();
+            }
+
             Panel card = new Panel();
             card.BackColor = Color.White;
             card.BorderStyle = BorderStyle.FixedSingle;
