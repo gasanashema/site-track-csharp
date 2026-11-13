@@ -966,6 +966,162 @@ namespace SiteTrack.Tests
                 try { System.IO.File.Delete(tempPath); } catch { }
             });
 
+            // --- Phase 10 End-to-End & Comprehensive Validation Tests ---
+            Test("Technical Rule 1: Rejects Empty or Whitespace Required Fields", delegate {
+                ProjectController projCtrl = new ProjectController();
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                Result<int> pRes = projCtrl.CreateProject("   ", "Kigali", "Desc", DateTime.Today, DateTime.Today.AddDays(30), "Planning");
+                Assert(!pRes.IsSuccess, "Must reject empty/whitespace project name");
+
+                MaterialController matCtrl = new MaterialController();
+                Result<int> mRes = matCtrl.CreateMaterial(1, "   ", "Bags", 5000m, "Desc");
+                Assert(!mRes.IsSuccess, "Must reject empty material name");
+
+                LaborController labCtrl = new LaborController();
+                Result<int> wRes = labCtrl.CreateWorker(1, "   ", "+250788000000", 5000m, "ACTIVE");
+                Assert(!wRes.IsSuccess, "Must reject empty worker full name");
+            });
+
+            Test("Technical Rule 2: Rejects Zero and Negative Numeric Fields", delegate {
+                StockController stockCtrl = new StockController();
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                Result pZeroQty = stockCtrl.RecordPurchase(1, 1, 0m, 5000m, "Supplier", DateTime.Today);
+                Assert(!pZeroQty.IsSuccess, "Must reject 0 purchase quantity");
+
+                Result pNegPrice = stockCtrl.RecordPurchase(1, 1, 10m, -500m, "Supplier", DateTime.Today);
+                Assert(!pNegPrice.IsSuccess, "Must reject negative purchase unit price");
+
+                LaborController labCtrl = new LaborController();
+                Result<int> wNegRate = labCtrl.CreateWorker(1, "Negative Worker", "+250788000000", -2500m, "ACTIVE");
+                Assert(!wNegRate.IsSuccess, "Must reject negative daily rate");
+            });
+
+            Test("Technical Rule 3: Accepts Same-Day Dates But Rejects EndDate Before StartDate", delegate {
+                ProjectController projCtrl = new ProjectController();
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                DateTime today = DateTime.Today;
+                Result<int> sameDay = projCtrl.CreateProject("Same Day Site Task", "Kigali", "One day task", today, today, "Planning");
+                Assert(sameDay.IsSuccess, "Start date == End date should be accepted");
+
+                Result<int> invalidDates = projCtrl.CreateProject("Invalid Dates Project", "Kigali", "Desc", today.AddDays(10), today, "Planning");
+                Assert(!invalidDates.IsSuccess, "EndDate before StartDate must be rejected");
+            });
+
+            Test("Business Rule 4: Site Manager Scoping Strictly Enforced Across All Domains", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123"); // Assigned only to Project 1 & 2, NOT Project 3
+
+                StockController stockCtrl = new StockController();
+                Result smPurchase = stockCtrl.RecordPurchase(3, 1, 10m, 1000m, "Supplier", DateTime.Today);
+                Assert(!smPurchase.IsSuccess, "Site Manager cannot record purchase for unassigned project 3");
+
+                Result smUsage = stockCtrl.RecordUsage(3, 1, 5m, "Excavation", DateTime.Today);
+                Assert(!smUsage.IsSuccess, "Site Manager cannot record usage for unassigned project 3");
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> smAct = actCtrl.RecordActivity(3, "Tile Laying", "Roofing work", DateTime.Today, 50);
+                Assert(!smAct.IsSuccess, "Site Manager cannot record activity for unassigned project 3");
+
+                LaborController labCtrl = new LaborController();
+                Result<int> smAtt = labCtrl.RecordAttendance(3, 1, DateTime.Today, "PRESENT", "Masonry work");
+                Assert(!smAtt.IsSuccess, "Site Manager cannot record attendance for unassigned project 3");
+            });
+
+            Test("Business Rule 5: Cannot Cancel or Delete Project With Active Movements or Stock", delegate {
+                ProjectController projCtrl = new ProjectController();
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                // Project 1 has active seed stock and purchase records
+                Result delRes = projCtrl.DeleteProject(1);
+                Assert(!delRes.IsSuccess, "Deleting Project 1 with active stock/usage/labor must be blocked");
+            });
+
+            Test("End-to-End Lifecycle Integration: Project, Purchase, Usage, Labor, Activity, and Reporting", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                // 1. Create Project
+                ProjectController projCtrl = new ProjectController();
+                Result<int> newProjRes = projCtrl.CreateProject("Kigali Green Park Complex", "Gasabo, Kigali", "Eco-friendly commercial hub", DateTime.Today, DateTime.Today.AddMonths(12), "Ongoing");
+                Assert(newProjRes.IsSuccess, "Admin must be able to create new project");
+                int projectId = newProjRes.Value;
+
+                // 2. Assign Site Manager
+                Result assignRes = projCtrl.AssignManager(projectId, 2); // user 2 is sitemgr
+                Assert(assignRes.IsSuccess, "Admin must be able to assign site manager to project");
+
+                // 3. Purchase Material (50 Bags at 12000 RWF)
+                StockController stockCtrl = new StockController();
+                Result purchRes = stockCtrl.RecordPurchase(projectId, 1, 50m, 12000m, "Rwanda Ciments Ltd", DateTime.Today);
+                Assert(purchRes.IsSuccess, "Must record initial purchase successfully");
+
+                // Verify stock balance
+                ProjectMaterialStock stock = stockCtrl.GetMaterialStock(projectId, 1);
+                Assert(stock != null && stock.QuantityAvailable == 50m, "Stock quantity must be 50");
+                Assert(stock.AverageUnitPrice == 12000m, "Weighted average unit price must be 12000");
+
+                // 4. Material Usage (15 Bags)
+                Result useRes = stockCtrl.RecordUsage(projectId, 1, 15m, "Pillar foundation casting", DateTime.Today);
+                Assert(useRes.IsSuccess, "Usage of 15 bags must succeed");
+
+                stock = stockCtrl.GetMaterialStock(projectId, 1);
+                Assert(stock.QuantityAvailable == 35m, "Remaining stock must be exactly 35 bags");
+
+                // Verify Business Rule 1 Depletion Rejection
+                Result overUseRes = stockCtrl.RecordUsage(projectId, 1, 40m, "Overdraft attempt", DateTime.Today);
+                Assert(!overUseRes.IsSuccess, "Business Rule 1 must reject usage exceeding 35 available bags");
+
+                // 5. Worker Registration & Attendance-Gated Payment
+                LaborController labCtrl = new LaborController();
+                Result<int> workerRes = labCtrl.CreateWorker(1, "E2E Craftsman Test", "+250788112233", 6000m, "ACTIVE");
+                Assert(workerRes.IsSuccess, "Must register site worker");
+                int workerId = workerRes.Value;
+
+                // Mark Attendance PRESENT
+                Result<int> attRes = labCtrl.RecordAttendance(projectId, workerId, DateTime.Today, "PRESENT", "Pillar formwork");
+                Assert(attRes.IsSuccess, "Must record attendance PRESENT");
+
+                // Pay Worker Wage (Business Rule 2)
+                var attRecord = labCtrl.GetAttendance(projectId, DateTime.Today).Find(delegate(WorkerAttendance a) { return a.WorkerId == workerId; });
+                Assert(attRecord != null, "Attendance record must be retrieved");
+
+                Result payRes = labCtrl.RecordPayment(projectId, workerId, attRecord.Id, DateTime.Today, 6000m, 6000m, "Cash voucher");
+                Assert(payRes.IsSuccess, "Payment for PRESENT worker must succeed");
+
+                // 6. Log Site Activity (Technical Rule 5: 35%)
+                ActivityController actCtrl = new ActivityController();
+                Result<int> actRes = actCtrl.RecordActivity(projectId, "Foundation Slab Completed", "Completed casting foundation slab", DateTime.Today, 35);
+                Assert(actRes.IsSuccess, "Activity with 35% progress must succeed");
+
+                // 7. Generate Executive Report & Export to CSV
+                ReportController repCtrl = new ReportController();
+                ProjectExecutiveSummary execSummary = repCtrl.GetProjectFinancialSummary(projectId);
+                Assert(execSummary != null, "Executive summary must not be null");
+                Assert(execSummary.TotalMaterialPurchases == 600000m, "Total purchases must be 50 * 12000 = 600000");
+                Assert(execSummary.TotalLaborWagesPaid == 6000m, "Total wages paid must be 6000");
+                Assert(execSummary.CurrentProgress == 35, "Latest reported progress must be 35%");
+
+                List<MaterialConsumptionReportItem> consumptionReport = repCtrl.GetMaterialConsumptionReport(projectId, DateTime.Today.AddDays(-1), DateTime.Today.AddDays(1));
+                Assert(consumptionReport.Count == 1, "Must have 1 consumption line");
+                Assert(consumptionReport[0].QuantityUsed == 15m, "Quantity used must be 15");
+
+                // Export to CSV
+                List<string> headers = new List<string> { "Material", "Qty Used", "Cost" };
+                List<List<string>> rows = new List<List<string>> {
+                    new List<string> { consumptionReport[0].MaterialName, consumptionReport[0].QuantityUsed.ToString(), consumptionReport[0].TotalCost.ToString() }
+                };
+                string csv = CsvExporter.FormatCsv(headers, rows);
+                Assert(csv.Contains("15"), "CSV must contain 15");
+                Assert(csv.Contains("180000"), "CSV must contain 180000 total cost");
+            });
+
             Console.WriteLine("-------------------------------------------------");
             Console.WriteLine(string.Format("Results: {0} PASSED, {1} FAILED", _passedCount, _failedCount));
             Console.WriteLine("=================================================");

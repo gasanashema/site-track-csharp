@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  sitetrack-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sitetrack_test_runner
+    volumes:
+      - .:/app
+    command: ["mono", "src/SiteTrack.Tests/bin/Release/SiteTrack.Tests.exe"]
+
+  # Optional database service (PostgreSQL / MySQL) for production deployments
+  sitetrack-db:
+    image: postgres:15-alpine
+    container_name: sitetrack_postgres_db
+    environment:
+      POSTGRES_DB: site_track_construction_manager_db
+      POSTGRES_USER: sitetrack_user
+      POSTGRES_PASSWORD: SecretPassword123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docs/001_initial_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./docs/002_seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql

@@ -197,9 +197,9 @@ SiteTrack/
 - [x] Implement PDF / printable document export engine.
 
 ### Milestone 10: Verification, Documentation & Release
-- [ ] Run automated tests verifying validation rules and calculations.
-- [ ] Update `VERSION`, `docs/CHANGELOG.md`, and `docs/phase-by-phase-plan.md`.
-- [ ] Prepare User Guide & database setup manual for AUCA Lab 3 submission.
+- [x] Run automated tests verifying validation rules and calculations.
+- [x] Update `VERSION`, `docs/CHANGELOG.md`, and `docs/phase-by-phase-plan.md`.
+- [x] Prepare User Guide & database setup manual for AUCA Lab 3 submission.
 
 ---
 
