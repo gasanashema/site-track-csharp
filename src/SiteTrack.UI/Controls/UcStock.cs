@@ -18,11 +18,14 @@ namespace SiteTrack.UI.Controls
         private TabControl tabControl;
         private TabPage tabBalances;
         private TabPage tabPurchases;
+        private TabPage tabUsages;
         private TabPage tabMovements;
 
         // Balances tab
         private DataGridView gridStock;
         private Button btnRecordPurchase;
+        private Button btnRecordUsage;
+        private Button btnAdjustStock;
         private Button btnRefresh;
         private Label lblMetricItems;
         private Label lblMetricLowStock;
@@ -30,6 +33,9 @@ namespace SiteTrack.UI.Controls
 
         // Purchases tab
         private DataGridView gridPurchases;
+
+        // Usages tab
+        private DataGridView gridUsages;
 
         // Movements tab
         private DataGridView gridMovements;
@@ -71,14 +77,14 @@ namespace SiteTrack.UI.Controls
             cmbProjects = new ComboBox();
             cmbProjects.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbProjects.Location = new Point(115, 12);
-            cmbProjects.Size = new Size(380, 26);
+            cmbProjects.Size = new Size(320, 26);
             cmbProjects.SelectedIndexChanged += delegate { LoadProjectData(); };
             pnlTop.Controls.Add(cmbProjects);
 
             btnRecordPurchase = new Button();
-            btnRecordPurchase.Text = "+ Record Purchase (IN)";
-            btnRecordPurchase.Location = new Point(510, 8);
-            btnRecordPurchase.Size = new Size(180, 36);
+            btnRecordPurchase.Text = "+ Purchase (IN)";
+            btnRecordPurchase.Location = new Point(450, 8);
+            btnRecordPurchase.Size = new Size(130, 36);
             btnRecordPurchase.BackColor = Color.FromArgb(22, 101, 52); // Green 800
             btnRecordPurchase.ForeColor = Color.White;
             btnRecordPurchase.FlatStyle = FlatStyle.Flat;
@@ -88,9 +94,35 @@ namespace SiteTrack.UI.Controls
             btnRecordPurchase.Click += BtnRecordPurchase_Click;
             pnlTop.Controls.Add(btnRecordPurchase);
 
+            btnRecordUsage = new Button();
+            btnRecordUsage.Text = "- Usage (OUT)";
+            btnRecordUsage.Location = new Point(590, 8);
+            btnRecordUsage.Size = new Size(125, 36);
+            btnRecordUsage.BackColor = Color.FromArgb(185, 28, 28); // Red 700
+            btnRecordUsage.ForeColor = Color.White;
+            btnRecordUsage.FlatStyle = FlatStyle.Flat;
+            btnRecordUsage.FlatAppearance.BorderSize = 0;
+            btnRecordUsage.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            btnRecordUsage.Cursor = Cursors.Hand;
+            btnRecordUsage.Click += BtnRecordUsage_Click;
+            pnlTop.Controls.Add(btnRecordUsage);
+
+            btnAdjustStock = new Button();
+            btnAdjustStock.Text = "Adjust Stock";
+            btnAdjustStock.Location = new Point(725, 8);
+            btnAdjustStock.Size = new Size(120, 36);
+            btnAdjustStock.BackColor = Color.FromArgb(30, 41, 59); // Slate 800
+            btnAdjustStock.ForeColor = Color.White;
+            btnAdjustStock.FlatStyle = FlatStyle.Flat;
+            btnAdjustStock.FlatAppearance.BorderSize = 0;
+            btnAdjustStock.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            btnAdjustStock.Cursor = Cursors.Hand;
+            btnAdjustStock.Click += BtnAdjustStock_Click;
+            pnlTop.Controls.Add(btnAdjustStock);
+
             btnRefresh = new Button();
             btnRefresh.Text = "Refresh";
-            btnRefresh.Location = new Point(700, 8);
+            btnRefresh.Location = new Point(855, 8);
             btnRefresh.Size = new Size(80, 36);
             btnRefresh.BackColor = Color.White;
             btnRefresh.FlatStyle = FlatStyle.Flat;
@@ -147,7 +179,7 @@ namespace SiteTrack.UI.Controls
             tabControl.TabPages.Add(tabBalances);
 
             // --- Tab 2: Purchases History ---
-            tabPurchases = new TabPage("Material Purchases (Inflow Ledger)");
+            tabPurchases = new TabPage("Purchases (Inflow Ledger)");
             tabPurchases.Padding = new Padding(12);
             tabPurchases.BackColor = Color.White;
 
@@ -167,19 +199,40 @@ namespace SiteTrack.UI.Controls
             tabPurchases.Controls.Add(gridPurchases);
             tabControl.TabPages.Add(tabPurchases);
 
-            // --- Tab 3: Stock Movements Audit Trail ---
-            tabMovements = new TabPage("Stock Movement Audit Trail");
+            // --- Tab 3: Daily Material Usage ---
+            tabUsages = new TabPage("Daily Material Usage (Outflow Ledger)");
+            tabUsages.Padding = new Padding(12);
+            tabUsages.BackColor = Color.White;
+
+            gridUsages = CreateStyledGrid();
+            gridUsages.Columns.Add("Date", "Usage Date");
+            gridUsages.Columns["Date"].Width = 100;
+            gridUsages.Columns.Add("MaterialName", "Material Item");
+            gridUsages.Columns.Add("Quantity", "Quantity Used");
+            gridUsages.Columns["Quantity"].Width = 110;
+            gridUsages.Columns.Add("UnitPrice", "Unit Cost (RWF)");
+            gridUsages.Columns["UnitPrice"].Width = 130;
+            gridUsages.Columns.Add("TotalCost", "Total Value (RWF)");
+            gridUsages.Columns["TotalCost"].Width = 140;
+            gridUsages.Columns.Add("Activity", "Site Activity / Task");
+            gridUsages.Columns.Add("RecordedBy", "Recorded By");
+
+            tabUsages.Controls.Add(gridUsages);
+            tabControl.TabPages.Add(tabUsages);
+
+            // --- Tab 4: Stock Movements Audit Trail ---
+            tabMovements = new TabPage("Stock Movement Audit Trail (Read-Only)");
             tabMovements.Padding = new Padding(12);
             tabMovements.BackColor = Color.White;
 
             gridMovements = CreateStyledGrid();
             gridMovements.Columns.Add("Type", "Type");
-            gridMovements.Columns["Type"].Width = 75;
+            gridMovements.Columns["Type"].Width = 90;
             gridMovements.Columns.Add("Date", "Movement Date");
-            gridMovements.Columns["Date"].Width = 100;
+            gridMovements.Columns["Date"].Width = 105;
             gridMovements.Columns.Add("Material", "Material Item");
             gridMovements.Columns.Add("Quantity", "Quantity");
-            gridMovements.Columns["Quantity"].Width = 90;
+            gridMovements.Columns["Quantity"].Width = 95;
             gridMovements.Columns.Add("UnitPrice", "Unit Price (RWF)");
             gridMovements.Columns["UnitPrice"].Width = 130;
             gridMovements.Columns.Add("TotalPrice", "Total Price (RWF)");
@@ -187,6 +240,7 @@ namespace SiteTrack.UI.Controls
             gridMovements.Columns.Add("Description", "Description / Reference");
             gridMovements.Columns.Add("RecordedBy", "Recorded By");
 
+            gridMovements.CellFormatting += GridMovements_CellFormatting;
             tabMovements.Controls.Add(gridMovements);
             tabControl.TabPages.Add(tabMovements);
 
@@ -264,6 +318,33 @@ namespace SiteTrack.UI.Controls
             }
         }
 
+        private void GridMovements_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex >= 0 && gridMovements.Columns[e.ColumnIndex].Name == "Type")
+            {
+                object val = e.Value;
+                if (val != null)
+                {
+                    string str = val.ToString();
+                    if (str == "IN")
+                    {
+                        e.CellStyle.ForeColor = Color.FromArgb(22, 101, 52); // Green
+                        e.CellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+                    }
+                    else if (str == "OUT")
+                    {
+                        e.CellStyle.ForeColor = Color.FromArgb(185, 28, 28); // Red
+                        e.CellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+                    }
+                    else if (str == "ADJUSTMENT")
+                    {
+                        e.CellStyle.ForeColor = Color.FromArgb(37, 99, 235); // Blue
+                        e.CellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+                    }
+                }
+            }
+        }
+
         private void LoadProjects()
         {
             cmbProjects.Items.Clear();
@@ -279,6 +360,14 @@ namespace SiteTrack.UI.Controls
             else
             {
                 btnRecordPurchase.Enabled = false;
+                btnRecordUsage.Enabled = false;
+                btnAdjustStock.Enabled = false;
+            }
+
+            // Adjust Stock is reserved for Administrators
+            if (!BaseController.IsAdmin)
+            {
+                btnAdjustStock.Visible = false;
             }
         }
 
@@ -288,7 +377,7 @@ namespace SiteTrack.UI.Controls
             return item != null ? (int?)item.Id : null;
         }
 
-        private void LoadProjectData()
+        public void LoadProjectData()
         {
             int? projId = GetSelectedProjectId();
             if (!projId.HasValue) return;
@@ -338,7 +427,23 @@ namespace SiteTrack.UI.Controls
                 );
             }
 
-            // 3. Load Movements
+            // 3. Load Usages
+            List<MaterialUsage> usages = _stockController.GetUsages(projId.Value);
+            gridUsages.Rows.Clear();
+            foreach (MaterialUsage u in usages)
+            {
+                gridUsages.Rows.Add(
+                    u.UsageDate.ToString("yyyy-MM-dd"),
+                    string.Format("{0} ({1})", u.MaterialName, u.Unit),
+                    string.Format("{0:N2} {1}", u.QuantityUsed, u.Unit),
+                    string.Format("{0:N2}", u.UnitPrice),
+                    string.Format("{0:N2}", u.TotalCost),
+                    u.ActivityDescription,
+                    u.RecordedByName ?? "Site Mgr"
+                );
+            }
+
+            // 4. Load Movements
             List<MaterialStockMovement> movements = _stockController.GetMovements(projId.Value);
             gridMovements.Rows.Clear();
             foreach (MaterialStockMovement m in movements)
@@ -360,6 +465,30 @@ namespace SiteTrack.UI.Controls
         {
             int? projId = GetSelectedProjectId();
             using (FormPurchaseDialog dlg = new FormPurchaseDialog(projId, _stockController, _projectController))
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    LoadProjectData();
+                }
+            }
+        }
+
+        private void BtnRecordUsage_Click(object sender, EventArgs e)
+        {
+            int? projId = GetSelectedProjectId();
+            using (FormUsageDialog dlg = new FormUsageDialog(projId, _stockController, _projectController))
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    LoadProjectData();
+                }
+            }
+        }
+
+        private void BtnAdjustStock_Click(object sender, EventArgs e)
+        {
+            int? projId = GetSelectedProjectId();
+            using (FormAdjustmentDialog dlg = new FormAdjustmentDialog(projId, null, _stockController, _projectController))
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {

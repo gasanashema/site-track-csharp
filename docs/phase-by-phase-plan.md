@@ -116,7 +116,7 @@ Source: plan.md
 - Stock adjustments update quantity and log an `ADJUSTMENT` movement record.
 - Movement records are strictly read-only and cannot be altered or deleted.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Phase 6 approved and marked complete. Implemented `StockController.RecordUsage`, Business Rule 1 stock depletion guard, `FormUsageDialog`, `FormAdjustmentDialog`, `UcMaterialUsage`, enhanced `UcStock` with 4-tab ledger and audit trail, and 8 automated tests (total 46 tests passing).
 
 ---
 

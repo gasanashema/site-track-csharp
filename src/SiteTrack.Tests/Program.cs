@@ -512,6 +512,127 @@ namespace SiteTrack.Tests
                 }
             });
 
+            Test("Usage Controller: Valid Usage Decrements Stock and Records OUT Movement", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                int projId = 1;
+                int matId = 1; // Cement
+
+                ProjectMaterialStock initialStock = stockCtrl.GetMaterialStock(projId, matId);
+                Assert(initialStock != null && initialStock.QuantityAvailable > 10m, "Initial stock should exist and be > 10");
+                decimal initialQty = initialStock.QuantityAvailable;
+
+                Result<int> res = stockCtrl.RecordUsage(projId, matId, 5m, "Ground floor column casting", DateTime.Today);
+                Assert(res.IsSuccess, "Recording valid usage should succeed: " + res.ErrorMessage);
+
+                ProjectMaterialStock updatedStock = stockCtrl.GetMaterialStock(projId, matId);
+                Assert(updatedStock.QuantityAvailable == initialQty - 5m,
+                    string.Format("Quantity should decrement by 5. Expected {0}, got {1}", initialQty - 5m, updatedStock.QuantityAvailable));
+
+                List<MaterialStockMovement> movs = stockCtrl.GetMovements(projId, matId);
+                MaterialStockMovement lastOut = movs.Find(delegate(MaterialStockMovement m) {
+                    return m.MovementType == "OUT" && m.Description.Contains("Ground floor column casting");
+                });
+                Assert(lastOut != null, "An OUT movement record must be created in movements ledger");
+                Assert(lastOut.Quantity == 5m, "Movement quantity must match usage quantity (5)");
+            });
+
+            Test("Usage Controller: Business Rule 1 Rejects Usage Exceeding Stock", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                int projId = 1;
+                int matId = 1;
+
+                ProjectMaterialStock currentStock = stockCtrl.GetMaterialStock(projId, matId);
+                decimal excessiveQty = currentStock.QuantityAvailable + 1000m;
+
+                Result<int> res = stockCtrl.RecordUsage(projId, matId, excessiveQty, "Excessive usage attempt", DateTime.Today);
+                Assert(!res.IsSuccess, "Business Rule 1 must reject usage when quantity exceeds stock");
+                Assert(res.ErrorMessage.Contains("Business Rule 1") || res.ErrorMessage.Contains("Insufficient stock"),
+                    "Error message must specify Business Rule 1 or insufficient stock");
+            });
+
+            Test("Usage Controller: Reject Non-Positive Usage Quantity", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                Result<int> resZero = stockCtrl.RecordUsage(1, 1, 0m, "Zero quantity test", DateTime.Today);
+                Assert(!resZero.IsSuccess, "Usage with zero quantity must be rejected");
+
+                Result<int> resNeg = stockCtrl.RecordUsage(1, 1, -15m, "Negative quantity test", DateTime.Today);
+                Assert(!resNeg.IsSuccess, "Usage with negative quantity must be rejected");
+            });
+
+            Test("Usage Controller: Reject Empty Activity Description", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                Result<int> resEmpty = stockCtrl.RecordUsage(1, 1, 2m, "   ", DateTime.Today);
+                Assert(!resEmpty.IsSuccess, "Usage without activity description must be rejected");
+                Assert(resEmpty.ErrorMessage.Contains("Activity description is required"), "Error should require activity description");
+            });
+
+            Test("Usage Controller: Site Manager Cannot Record Usage For Unassigned Project", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123"); // sitemgr assigned to 1 & 2, not 3
+
+                StockController stockCtrl = new StockController();
+                Result<int> res = stockCtrl.RecordUsage(3, 1, 1m, "Unassigned project usage", DateTime.Today);
+                Assert(!res.IsSuccess, "Site manager should not be allowed to record usage for unassigned project");
+                Assert(res.ErrorMessage.Contains("Access Denied"), "Error should indicate Access Denied");
+            });
+
+            Test("Stock Adjustment: Admin Can Record Physical Inventory Reconciliation", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                int projId = 2; // Kigali Convention Center
+                int matId = 2; // Reinforcement Steel
+
+                Result res = stockCtrl.RecordStockAdjustment(projId, matId, 85m, "Physical count audit adjustment");
+                Assert(res.IsSuccess, "Admin stock adjustment must succeed: " + res.ErrorMessage);
+
+                ProjectMaterialStock stock = stockCtrl.GetMaterialStock(projId, matId);
+                Assert(stock != null && stock.QuantityAvailable == 85m, "Stock balance must reflect physical count of 85");
+
+                List<MaterialStockMovement> movs = stockCtrl.GetMovements(projId, matId);
+                MaterialStockMovement adjMov = movs.Find(delegate(MaterialStockMovement m) {
+                    return m.MovementType == "ADJUSTMENT" && m.Description.Contains("Physical count audit adjustment");
+                });
+                Assert(adjMov != null, "Audit trail must record ADJUSTMENT movement");
+            });
+
+            Test("Stock Adjustment: Non-Admin Blocked From Recording Stock Adjustment", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                Result res = stockCtrl.RecordStockAdjustment(1, 1, 50m, "Unauthorized adjustment attempt");
+                Assert(!res.IsSuccess, "Non-admin must be blocked from stock adjustment");
+                Assert(res.ErrorMessage.Contains("Access Denied"), "Error should indicate Access Denied");
+            });
+
+            Test("Audit Trail: Stock Movement Ledger Captures IN, OUT, and ADJUSTMENT", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                List<MaterialStockMovement> movs = stockCtrl.GetMovements(1);
+                Assert(movs.Count > 0, "Movements ledger must contain historical transactions");
+
+                bool hasIn = movs.Exists(delegate(MaterialStockMovement m) { return m.MovementType == "IN"; });
+                bool hasOut = movs.Exists(delegate(MaterialStockMovement m) { return m.MovementType == "OUT"; });
+                Assert(hasIn, "Movements ledger should include IN movements");
+                Assert(hasOut, "Movements ledger should include OUT movements");
+            });
+
             Console.WriteLine("-------------------------------------------------");
             Console.WriteLine(string.Format("Results: {0} PASSED, {1} FAILED", _passedCount, _failedCount));
             Console.WriteLine("=================================================");
