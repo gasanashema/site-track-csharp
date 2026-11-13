@@ -6,9 +6,9 @@
 
 INSERT INTO users (id, full_name, username, email, password, role, phone, status, created_at, updated_at)
 VALUES 
-(1, 'System Administrator', 'admin', 'admin@sitetrack.rw', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'Administrator', '+250788100001', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'Patrick Mutabazi', 'sitemgr', 'pmutabazi@sitetrack.rw', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'SiteManager', '+250788100002', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'Aline Uwimana', 'aline.mgr', 'aline@sitetrack.rw', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'SiteManager', '+250788100003', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+(1, 'System Administrator', 'admin', 'admin@sitetrack.rw', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'Administrator', '+250788100001', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'Patrick Mutabazi', 'sitemgr', 'pmutabazi@sitetrack.rw', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'SiteManager', '+250788100002', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'Aline Uwimana', 'aline.mgr', 'aline@sitetrack.rw', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'SiteManager', '+250788100003', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO projects (id, project_name, location, description, start_date, expected_end_date, status, created_by, created_at, updated_at)
