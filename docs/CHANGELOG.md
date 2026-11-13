@@ -5,6 +5,17 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-11-13
+
+### Added
+- **Site Activity Controller (ActivityController)**: Implemented activity logging, project scoping validation (Site Managers scoped to assigned sites, Admins cross-project), and latest progress tracking.
+- **Technical Rule 5 Enforcement**: Constrained milestone progress percentage strictly between `0` and `100` inclusive with boundary checks (0% and 100% accepted; `< 0` and `> 100` rejected).
+- **Desktop Activity Logging Views**:
+  - `UcActivities`: Interactive daily site activity dashboard with project selector, search filtering, overall milestone completion progress bar, summary metrics (latest reported progress, milestone count, last activity date), and styled timeline DataGridView.
+  - `FormActivityDialog`: Modal dialog for logging site tasks with live progress slider/progress bar synchronization, title/description validation, and Technical Rule 5 error handling.
+- **Main Shell Integration**: Enabled `Site Activities` module navigation in `FormMainShell.cs`.
+- **Expanded Automated Test Suite**: Added 8 automated tests to `SiteTrack.Tests` covering valid activity recording, Technical Rule 5 negative progress rejection, excessive (> 100) progress rejection, boundary values (0% and 100%), empty title rejection, site manager scoping, unassigned project blocking, and progress timeline ordering. Total test suite reached 62 passing tests with 100% success rate.
+
 ## [0.8.0] - 2026-11-13
 
 ### Added

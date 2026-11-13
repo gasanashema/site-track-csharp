@@ -94,6 +94,9 @@
     <Compile Include="Forms\Dialogs\FormPaymentDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\Dialogs\FormActivityDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +119,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\UcLabor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UcActivities.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Program.cs" />

@@ -183,9 +183,9 @@ SiteTrack/
 - [x] Track `amount_owed` vs. `amount_paid` and status (`PENDING` vs. `PAID`).
 
 ### Milestone 8: Site Activities & Daily Progress
-- [ ] Build `UcActivities` for logging site operations.
-- [ ] Implement Technical Rule 5: Progress percentage constrained strictly between 0 and 100.
-- [ ] Filter activity logs by project and date.
+- [x] Build `UcActivities` for logging site operations.
+- [x] Implement Technical Rule 5: Progress percentage constrained strictly between 0 and 100.
+- [x] Filter activity logs by project and date.
 
 ### Milestone 9: Reporting, Analytics & Data Export
 - [ ] Build `UcReports` with report selector and date range filters:
