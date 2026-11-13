@@ -309,6 +309,11 @@ namespace SiteTrack.UI.Forms
                 return new Controls.UcLabor();
             }
 
+            if (string.Equals(module, "Site Activities", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Controls.UcActivities();
+            }
+
             Panel card = new Panel();
             card.BackColor = Color.White;
             card.BorderStyle = BorderStyle.FixedSingle;

@@ -151,7 +151,7 @@ Source: plan.md
 - Valid activity records are saved and displayed with date and progress bar.
 - Site Managers can only log activities for projects assigned to them.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Phase 8 approved and marked complete. Implemented `ActivityController`, `FormActivityDialog`, `UcActivities` with overall progress bar, Technical Rule 5 progress percentage constraints (0-100), and 8 automated tests (total 62 tests passing).
 
 ---
 

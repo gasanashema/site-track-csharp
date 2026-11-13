@@ -761,6 +761,96 @@ namespace SiteTrack.Tests
                 Assert(resSettle.IsSuccess, "Settling full payment balance should succeed");
             });
 
+            Test("Activity Controller: Admin Can Record Valid Activity and Progress Percentage", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res = actCtrl.RecordActivity(1, "Foundation Excavation & Compaction", "Substructure earthworks completed to bedrock", DateTime.Today, 25);
+                Assert(res.IsSuccess, "Recording valid activity should succeed: " + res.ErrorMessage);
+                Assert(res.Value > 0, "Created activity ID must be positive");
+
+                List<ProjectActivity> activities = actCtrl.GetActivities(1);
+                ProjectActivity act = activities.Find(delegate(ProjectActivity a) { return a.Id == res.Value; });
+                Assert(act != null, "Recorded activity must be retrieved in list");
+                Assert(act.ProgressPercentage == 25, "Progress percentage must match 25%");
+            });
+
+            Test("Activity Controller: Technical Rule 5 Rejects Negative Progress Percentage (< 0)", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res = actCtrl.RecordActivity(1, "Invalid Negative Progress", "Testing boundary", DateTime.Today, -15);
+                Assert(!res.IsSuccess, "Technical Rule 5 must reject progress percentage < 0");
+                Assert(res.ErrorMessage.Contains("Technical Rule 5") || res.ErrorMessage.Contains("between 0 and 100"),
+                    "Error message should mention Technical Rule 5 or range between 0 and 100");
+            });
+
+            Test("Activity Controller: Technical Rule 5 Rejects Excessive Progress Percentage (> 100)", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res = actCtrl.RecordActivity(1, "Invalid Over-100 Progress", "Testing upper boundary", DateTime.Today, 110);
+                Assert(!res.IsSuccess, "Technical Rule 5 must reject progress percentage > 100");
+                Assert(res.ErrorMessage.Contains("Technical Rule 5") || res.ErrorMessage.Contains("between 0 and 100"),
+                    "Error message should mention Technical Rule 5 or range between 0 and 100");
+            });
+
+            Test("Activity Controller: Technical Rule 5 Accepts Boundary Percentages (0% and 100%)", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res0 = actCtrl.RecordActivity(1, "Project Kickoff", "Initial site setup", DateTime.Today, 0);
+                Assert(res0.IsSuccess, "0% progress boundary should be accepted: " + res0.ErrorMessage);
+
+                Result<int> res100 = actCtrl.RecordActivity(1, "Project Handover Complete", "All civil and finishing works certified", DateTime.Today, 100);
+                Assert(res100.IsSuccess, "100% progress boundary should be accepted: " + res100.ErrorMessage);
+            });
+
+            Test("Activity Controller: Reject Empty Activity Title", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res = actCtrl.RecordActivity(1, "   ", "Empty title test", DateTime.Today, 30);
+                Assert(!res.IsSuccess, "Empty activity title must be rejected");
+                Assert(res.ErrorMessage.Contains("title is required"), "Error message should require title");
+            });
+
+            Test("Activity Controller: Site Manager Can Record Activity For Assigned Project", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123"); // Assigned to projects 1 and 2
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res = actCtrl.RecordActivity(1, "Column Reinforcement Inspection", "Structural inspection passed", DateTime.Today, 40);
+                Assert(res.IsSuccess, "Site manager should record activity for assigned project 1: " + res.ErrorMessage);
+            });
+
+            Test("Activity Controller: Site Manager Blocked From Recording Activity For Unassigned Project", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123"); // NOT assigned to project 3
+
+                ActivityController actCtrl = new ActivityController();
+                Result<int> res = actCtrl.RecordActivity(3, "Illegal Site Access", "Should be blocked", DateTime.Today, 50);
+                Assert(!res.IsSuccess, "Site manager should be blocked from unassigned project 3");
+                Assert(res.ErrorMessage.Contains("Access Denied"), "Error should indicate Access Denied");
+            });
+
+            Test("Activity Controller: Timeline Returns Ordered Activities and Latest Progress", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ActivityController actCtrl = new ActivityController();
+                List<ProjectActivity> activities = actCtrl.GetActivities(1);
+                Assert(activities != null && activities.Count > 0, "Activities list must not be empty");
+
+                int latestProgress = actCtrl.GetLatestProgress(1);
+                Assert(latestProgress >= 0 && latestProgress <= 100, "Latest progress must be bounded between 0 and 100");
+            });
+
             Console.WriteLine("-------------------------------------------------");
             Console.WriteLine(string.Format("Results: {0} PASSED, {1} FAILED", _passedCount, _failedCount));
             Console.WriteLine("=================================================");
