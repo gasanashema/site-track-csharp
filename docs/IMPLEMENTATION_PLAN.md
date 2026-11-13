@@ -168,11 +168,11 @@ SiteTrack/
   - Insert immutable `material_stock_movements` record of type `IN`.
 
 ### Milestone 6: Stock Tracking, Adjustments & Usage Depletion
-- [ ] Build `UcStock` with color-coded highlighting for materials below `minimum_quantity`.
-- [ ] Implement stock adjustment dialog for physical inventory reconciliation (`ADJUSTMENT` movement).
-- [ ] Build `UcMaterialUsage` for Site Managers to log daily material consumption.
-- [ ] Implement Business Rule 1: Reject usage if `quantity_used > quantity_available`.
-- [ ] Implement usage transaction: decrement stock, record `material_usage`, record `OUT` movement.
+- [x] Build `UcStock` with color-coded highlighting for materials below `minimum_quantity`.
+- [x] Implement stock adjustment dialog for physical inventory reconciliation (`ADJUSTMENT` movement).
+- [x] Build `UcMaterialUsage` for Site Managers to log daily material consumption.
+- [x] Implement Business Rule 1: Reject usage if `quantity_used > quantity_available`.
+- [x] Implement usage transaction: decrement stock, record `material_usage`, record `OUT` movement.
 
 ### Milestone 7: Labor Registration, Attendance & Gated Wage Payments
 - [ ] Implement worker type management (`worker_types`) and worker registration (`site_workers`).

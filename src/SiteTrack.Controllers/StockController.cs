@@ -109,6 +109,61 @@ namespace SiteTrack.Controllers
             return _stockRepository.GetPurchases(projectId, startDate, endDate);
         }
 
+        public Result<int> RecordUsage(int projectId, int materialId, decimal quantityUsed, string activityDescription, DateTime usageDate)
+        {
+            if (!CanAccessProject(projectId))
+            {
+                return Result<int>.Failure("Access Denied: You are not assigned to record material usage for this project.");
+            }
+
+            if (quantityUsed <= 0)
+            {
+                return Result<int>.Failure("Quantity used must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(activityDescription) || string.IsNullOrEmpty(activityDescription.Trim()))
+            {
+                return Result<int>.Failure("Activity description is required (e.g. Foundation casting, wall plastering).");
+            }
+
+            ProjectMaterialStock stock = _stockRepository.GetStock(projectId, materialId);
+            if (stock == null || stock.QuantityAvailable < quantityUsed)
+            {
+                decimal available = stock != null ? stock.QuantityAvailable : 0m;
+                return Result<int>.Failure(string.Format("Business Rule 1: Cannot record usage. Quantity requested ({0:N2}) exceeds available stock ({1:N2}).", quantityUsed, available));
+            }
+
+            MaterialUsage usage = new MaterialUsage
+            {
+                ProjectId = projectId,
+                MaterialId = materialId,
+                QuantityUsed = quantityUsed,
+                ActivityDescription = activityDescription.Trim(),
+                UsageDate = usageDate.Date,
+                RecordedBy = CurrentUserId
+            };
+
+            try
+            {
+                int id = _stockRepository.RecordUsage(usage);
+                return Result<int>.Success(id);
+            }
+            catch (ValidationException ex)
+            {
+                return Result<int>.Failure(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Result<int>.Failure("Error recording usage: " + ex.Message);
+            }
+        }
+
+        public List<MaterialUsage> GetUsages(int projectId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            if (!CanAccessProject(projectId)) return new List<MaterialUsage>();
+            return _stockRepository.GetUsages(projectId, startDate, endDate);
+        }
+
         public List<MaterialStockMovement> GetMovements(int projectId, int? materialId = null)
         {
             if (!CanAccessProject(projectId)) return new List<MaterialStockMovement>();

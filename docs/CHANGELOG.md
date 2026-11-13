@@ -5,6 +5,18 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-13
+
+### Added
+- **Material Usage & Stock Depletion Guard (Business Rule 1)**: Implemented `RecordUsage` in `StockController`, enforcing strict stock depletion validation preventing material usage when `quantity_used > quantity_available`. Automatically applies weighted average unit cost and decrements project stock balance.
+- **Immutable Movement Audit Logging**: Recorded immutable `OUT` movements for material usage with activity descriptions, recorded by user ID, and timestamp.
+- **Physical Inventory Stock Adjustment**: Implemented `RecordStockAdjustment` in `StockController` allowing Administrators to reconcile physical inventory counts with calculated deltas and immutable `ADJUSTMENT` movement logging.
+- **Material Usage View (UcMaterialUsage)**: Developed dedicated user control featuring project selector, date range filtering, search filter, consumption metrics (entries, total cost, distinct materials), and styled DataGridView.
+- **Material Usage Dialog (FormUsageDialog)**: Created modal dialog with live stock availability indicator, real-time depletion validation warnings, and site activity inputs.
+- **Physical Adjustment Dialog (FormAdjustmentDialog)**: Created admin modal dialog with live delta computation (surplus vs. deficit) and audit reason requirements.
+- **Enhanced Stock Inventory View (UcStock)**: Added dedicated tabs for "Daily Material Usage (Outflow Ledger)" and "Stock Movement Audit Trail (Read-Only)", with color-coded movement type pills (Green for IN, Red for OUT, Blue for ADJUSTMENT) and direct action buttons for Purchase, Usage, and Adjustment.
+- **Expanded Automated Test Suite**: Added 8 automated tests to `SiteTrack.Tests` covering valid usage deduction, Business Rule 1 stock depletion rejection, non-positive quantity checks, empty activity description guards, site manager project scoping for usages, physical inventory adjustment with delta logging, non-admin adjustment rejection, and multi-type movement audit trail verification. All 46 tests in the suite passed with 100% success rate.
+
 ## [0.6.0] - 2026-11-13
 
 ### Added
