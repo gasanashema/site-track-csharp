@@ -5,6 +5,24 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-13
+
+### Added
+- **Material Category & Catalog Management (MaterialController)**: Implemented category CRUD, master material item creation, reference unit pricing, negative price rejection, and category deletion guards against linked active materials.
+- **Material Catalog Views**:
+  - `UcMaterials`: Master catalog management control with searchable categorized materials list and dedicated Category Management tab.
+  - `FormCategoryDialog`: Category creation and edit modal with duplicate name prevention.
+  - `FormMaterialDialog`: Material registration dialog enforcing category selection, positive price, unit of measurement, and initial status.
+- **Stock Tracking & Purchase Workflow (StockController)**:
+  - Atomic purchase logging updating `material_purchases` and `project_material_stock`.
+  - Recalculates weighted average unit price dynamically using `((old_qty * old_avg) + (new_qty * new_price)) / (old_qty + new_qty)`.
+  - Records immutable `IN` transaction in `material_stock_movements`.
+  - Scoping validation: Site Managers can only record purchases for projects assigned to them.
+- **Stock Management & Purchase Views**:
+  - `UcStock`: Real-time stock inventory dashboard displaying quantity available, minimum thresholds, weighted unit prices, total valuation per item, and low-stock highlighting (`⚠️ LOW STOCK` in bold red).
+  - `FormPurchaseDialog`: Material purchase entry modal with project scoping, supplier input, quantity, unit price, and total expenditure calculation.
+- **Phase 5 Automated Test Suite**: Added 8 automated tests to `SiteTrack.Tests` covering category CRUD, deletion prevention for linked materials, master material validation, purchase recording, atomic weighted average price recalculation, and project-scoped purchase access. All 38 tests in the suite passed with 100% success rate.
+
 ## [0.5.0] - 2026-11-13
 
 ### Added

@@ -158,10 +158,10 @@ SiteTrack/
 - [x] Implement deletion guards preventing removal of projects with active transactions.
 
 ### Milestone 5: Material Catalogs & Purchase Management
-- [ ] Implement `MaterialRepository` and `MaterialController`.
-- [ ] Build `UcMaterials` for managing material categories and individual materials.
-- [ ] Implement purchase recording dialog (`material_purchases`).
-- [ ] Implement transaction logic:
+- [x] Implement `MaterialRepository` and `MaterialController`.
+- [x] Build `UcMaterials` for managing material categories and individual materials.
+- [x] Implement purchase recording dialog (`material_purchases`).
+- [x] Implement transaction logic:
   - Add `material_purchases` entry.
   - Insert or update `project_material_stock` balance.
   - Calculate weighted average unit price.

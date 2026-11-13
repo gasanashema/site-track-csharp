@@ -67,6 +67,15 @@
     <Compile Include="Forms\Dialogs\FormAssignManagerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\Dialogs\FormCategoryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormMaterialDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormPurchaseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +86,12 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\UcProjects.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UcMaterials.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UcStock.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Program.cs" />
