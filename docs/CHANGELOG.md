@@ -5,6 +5,24 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-13
+
+### Added
+- **Labor Controller & Work Management (LaborController)**: Implemented worker skill categories CRUD, site worker registration with custom daily wage rates, daily attendance tracking, and attendance-gated wage payments.
+- **Attendance-Gated Wage Payments (Business Rule 2)**: Enforced strict gating blocking daily wage payments unless the worker has an attendance record marked `PRESENT` for that project and date. Supported partial payments and balance settlement tracking.
+- **Unique Attendance Constraint Enforcement**: Enforced single attendance record per worker per project per work date with upsert capability, and strictly blocked attendance logging for inactive workers.
+- **Desktop Labor Views**:
+  - `UcLabor`: Multi-tab labor management control featuring:
+    - Tab 1: Daily Attendance & Wage Allocation (with project and date filters, summary cards for workers logged, present, and daily wage liability).
+    - Tab 2: Worker Registry (*Aba-byizi* and craftsmen directory with category and status filters, and modal edit dialogs).
+    - Tab 3: Wage Payments Ledger (voucher history, total disbursed, outstanding liabilities, and balance settlement).
+    - Tab 4: Skill Categories & Standard Rates (trade benchmarks and rate configurations).
+  - `FormWorkerTypeDialog`: Modal for creating and editing skill categories with standard rates.
+  - `FormWorkerDialog`: Modal for registering site workers with category selection, contact info, and custom daily rates.
+  - `FormAttendanceDialog`: Modal for recording attendance status (`PRESENT`, `ABSENT`, `HALF_DAY`) and assigned tasks.
+  - `FormPaymentDialog`: Modal for recording wage payments with live Business Rule 2 eligibility indicators and balance due tracking.
+- **Expanded Automated Test Suite**: Added 8 automated tests to `SiteTrack.Tests` covering worker type CRUD, non-admin blocking, duplicate trade rejection, worker registration with custom rates, daily attendance upsert, inactive worker attendance rejection, Business Rule 2 absent payment rejection, and attendance-gated payment balance tracking. Total test count reached 54 tests passing with 100% success rate.
+
 ## [0.7.0] - 2026-11-13
 
 ### Added

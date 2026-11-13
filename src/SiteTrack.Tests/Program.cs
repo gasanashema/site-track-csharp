@@ -633,6 +633,134 @@ namespace SiteTrack.Tests
                 Assert(hasOut, "Movements ledger should include OUT movements");
             });
 
+            Test("Labor Controller: Admin Can Create Worker Type With Benchmark Rate", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                Result<int> res = laborCtrl.CreateWorkerType("Scaffolding Specialist", 7500m, "Certified scaffolding erection technician");
+                Assert(res.IsSuccess, "Admin creating worker type must succeed: " + res.ErrorMessage);
+                Assert(res.Value > 0, "Created worker type ID must be positive");
+            });
+
+            Test("Labor Controller: Non-Admin Blocked From Creating Worker Type", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                Result<int> res = laborCtrl.CreateWorkerType("Unauthorized Trade", 6000m, "Should fail");
+                Assert(!res.IsSuccess, "Non-admin must be blocked from creating worker type");
+                Assert(res.ErrorMessage.Contains("Access Denied"), "Error should indicate Access Denied");
+            });
+
+            Test("Labor Controller: Reject Duplicate Worker Type Name", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                Result<int> res = laborCtrl.CreateWorkerType("Scaffolding Specialist", 8000m, "Duplicate of Scaffolding Specialist");
+                Assert(!res.IsSuccess, "Duplicate worker type name must be rejected");
+                Assert(res.ErrorMessage.Contains("already exists"), "Error message should mention already exists");
+            });
+
+            Test("Labor Controller: Admin Can Register Site Worker With Custom Daily Rate", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                Result<int> res = laborCtrl.CreateWorker(1, "Habimana Jean Pierre", "0788998877", 6500m, "ACTIVE");
+                Assert(res.IsSuccess, "Registering site worker should succeed: " + res.ErrorMessage);
+                Assert(res.Value > 0, "Created worker ID must be positive");
+
+                SiteWorker w = laborCtrl.GetWorker(res.Value);
+                Assert(w != null && w.DailyRate == 6500m, "Worker daily rate should match custom assigned rate (6500)");
+            });
+
+            Test("Labor Controller: Record Daily Attendance PRESENT and Upsert Logic", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                int projId = 1;
+                int workerId = 1;
+                DateTime today = DateTime.Today;
+
+                Result<int> resPresent = laborCtrl.RecordAttendance(projId, workerId, today, "PRESENT", "Concrete slab formwork preparation");
+                Assert(resPresent.IsSuccess, "Logging attendance PRESENT should succeed: " + resPresent.ErrorMessage);
+
+                List<WorkerAttendance> list = laborCtrl.GetAttendance(projId, today);
+                WorkerAttendance att = list.Find(delegate(WorkerAttendance a) { return a.WorkerId == workerId; });
+                Assert(att != null, "Attendance record must exist for worker 1 today");
+                Assert(att.IsPresent, "Attendance status must evaluate to IsPresent == true");
+            });
+
+            Test("Labor Controller: Prevent Attendance For Inactive Worker", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                // Create an inactive worker
+                Result<int> resWorker = laborCtrl.CreateWorker(2, "Inactive Laborer", "0781112233", 4000m, "INACTIVE");
+                Assert(resWorker.IsSuccess, "Inactive worker creation should succeed");
+
+                Result<int> resAtt = laborCtrl.RecordAttendance(1, resWorker.Value, DateTime.Today, "PRESENT", "Attempting work while inactive");
+                Assert(!resAtt.IsSuccess, "Attendance recording for inactive worker must be rejected");
+                Assert(resAtt.ErrorMessage.Contains("inactive") || resAtt.ErrorMessage.Contains("Cannot record attendance"),
+                    "Error should explain worker is inactive");
+            });
+
+            Test("Labor Controller: Business Rule 2 Rejects Wage Payment When Attendance is ABSENT", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                int projId = 1;
+                int workerId = 2; // Another worker
+                DateTime targetDate = DateTime.Today.AddDays(-2);
+
+                // Record attendance as ABSENT
+                Result<int> resAtt = laborCtrl.RecordAttendance(projId, workerId, targetDate, "ABSENT", "Sick leave / absent");
+                Assert(resAtt.IsSuccess, "Recording ABSENT attendance should succeed");
+
+                // Try to create payment for ABSENT worker
+                Result<int> resPay = laborCtrl.RecordPayment(projId, workerId, resAtt.Value, targetDate, 5000m, 5000m, "Payment attempt for absent worker");
+                Assert(!resPay.IsSuccess, "Business Rule 2 must strictly block payment creation for absent worker");
+                Assert(resPay.ErrorMessage.Contains("Business Rule 2") || resPay.ErrorMessage.Contains("PRESENT"),
+                    "Error message must specify Business Rule 2 or PRESENT requirement");
+            });
+
+            Test("Labor Controller: Business Rule 2 Allows Wage Payment for PRESENT Worker and Tracks Balance", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                LaborController laborCtrl = new LaborController();
+                int projId = 1;
+                int workerId = 3;
+                DateTime targetDate = DateTime.Today.AddDays(-1);
+
+                // Record attendance as PRESENT
+                Result<int> resAtt = laborCtrl.RecordAttendance(projId, workerId, targetDate, "PRESENT", "Wall bricklaying masonry");
+                Assert(resAtt.IsSuccess, "Recording PRESENT attendance should succeed");
+
+                // Partial payment: owed 6000, paid 4000 (pending balance 2000)
+                decimal dailyRate = 6000m;
+                decimal paidAmount = 4000m;
+                Result<int> resPay = laborCtrl.RecordPayment(projId, workerId, resAtt.Value, targetDate, dailyRate, paidAmount, "Partial daily wage payout");
+                Assert(resPay.IsSuccess, "Payment for PRESENT worker should succeed: " + resPay.ErrorMessage);
+
+                List<WorkerPayment> payments = laborCtrl.GetPayments(projId, targetDate, targetDate);
+                WorkerPayment pay = payments.Find(delegate(WorkerPayment p) { return p.AttendanceId == resAtt.Value; });
+                Assert(pay != null, "Payment record must exist");
+                Assert(pay.AmountOwed == 6000m, "AmountOwed should equal daily rate (6000)");
+                Assert(pay.AmountPaid == 4000m, "AmountPaid should equal 4000");
+                Assert(pay.BalanceDue == 2000m, "BalanceDue should be 2000");
+                Assert(pay.PaymentStatus == "PENDING", "PaymentStatus should be PENDING");
+
+                // Settle remainder
+                Result resSettle = laborCtrl.SettlePayment(pay.Id, 6000m, 6000m);
+                Assert(resSettle.IsSuccess, "Settling full payment balance should succeed");
+            });
+
             Console.WriteLine("-------------------------------------------------");
             Console.WriteLine(string.Format("Results: {0} PASSED, {1} FAILED", _passedCount, _failedCount));
             Console.WriteLine("=================================================");

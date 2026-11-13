@@ -82,6 +82,18 @@
     <Compile Include="Forms\Dialogs\FormAdjustmentDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\Dialogs\FormWorkerTypeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormWorkerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormAttendanceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormPaymentDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,6 +113,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\UcMaterialUsage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UcLabor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Program.cs" />

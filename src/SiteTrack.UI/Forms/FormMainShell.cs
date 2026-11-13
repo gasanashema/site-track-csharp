@@ -304,6 +304,11 @@ namespace SiteTrack.UI.Forms
                 return new Controls.UcStock();
             }
 
+            if (string.Equals(module, "Labor & Attendance", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Controls.UcLabor();
+            }
+
             Panel card = new Panel();
             card.BackColor = Color.White;
             card.BorderStyle = BorderStyle.FixedSingle;

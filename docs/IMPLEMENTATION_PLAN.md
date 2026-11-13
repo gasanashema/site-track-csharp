@@ -175,12 +175,12 @@ SiteTrack/
 - [x] Implement usage transaction: decrement stock, record `material_usage`, record `OUT` movement.
 
 ### Milestone 7: Labor Registration, Attendance & Gated Wage Payments
-- [ ] Implement worker type management (`worker_types`) and worker registration (`site_workers`).
-- [ ] Build `UcLaborAttendance` for recording daily worker attendance (`PRESENT`, `ABSENT`, `HALF_DAY`).
-- [ ] Enforce unique attendance constraint (`project_id`, `worker_id`, `work_date`).
-- [ ] Build `UcLaborPayments` for recording daily wage payments.
-- [ ] Implement Business Rule 2: Strictly block payment creation unless worker is `PRESENT` on that date.
-- [ ] Track `amount_owed` vs. `amount_paid` and status (`PENDING` vs. `PAID`).
+- [x] Implement worker type management (`worker_types`) and worker registration (`site_workers`).
+- [x] Build `UcLaborAttendance` for recording daily worker attendance (`PRESENT`, `ABSENT`, `HALF_DAY`).
+- [x] Enforce unique attendance constraint (`project_id`, `worker_id`, `work_date`).
+- [x] Build `UcLaborPayments` for recording daily wage payments.
+- [x] Implement Business Rule 2: Strictly block payment creation unless worker is `PRESENT` on that date.
+- [x] Track `amount_owed` vs. `amount_paid` and status (`PENDING` vs. `PAID`).
 
 ### Milestone 8: Site Activities & Daily Progress
 - [ ] Build `UcActivities` for logging site operations.
