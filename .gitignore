@@ -1,0 +1,12 @@
+# Visual Studio / .NET Gitignore
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+packages/
+*.nupkg
+TestResults/
+*.log
