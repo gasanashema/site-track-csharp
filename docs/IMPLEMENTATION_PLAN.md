@@ -135,8 +135,8 @@ SiteTrack/
 ### Milestone 1: Core Foundation & Data Access
 - [x] Initialize repository and project structure (`SiteTrack.sln`).
 - [x] Implement SQL schema creation scripts for all 16 tables.
-- [ ] Implement database connection factory and test connection handler.
-- [ ] Implement seed script with default Administrator account (`admin`/`Admin@123`), sample projects, worker types, and material categories.
+- [x] Implement database connection factory and test connection handler.
+- [x] Implement seed script with default Administrator account (`admin`/`Admin@123`), sample projects, worker types, and material categories.
 - [x] Implement POCO entity models in `SiteTrack.Core.Models`.
 
 ### Milestone 2: Authentication, Security & Role Scoping

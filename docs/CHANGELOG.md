@@ -5,6 +5,22 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-13
+
+### Added
+- **Database Connection Factory**: Implemented `IDbConnectionFactory` and `DbConnectionFactory` with ADO.NET connection testing, provider resolution, and fallback to `SiteTrackDataStore`.
+- **Relational Data Storage Engine**: Built thread-safe relational data store `SiteTrackDataStore` with auto-increment ID generation, transactional integrity, and seed initialization.
+- **Reference Seed Data (002_seed_data.sql)**: Seeded default Admin (`admin`), Site Managers (`sitemgr`, `aline.mgr`), 3 sample construction projects, 6 material categories, 10 materials, 6 worker types, and 10 site workers (*umubyizi* & craftsmen).
+- **Core Repository Interfaces**: Implemented `IUserRepository`, `IProjectRepository`, `IMaterialRepository`, `IStockRepository`, `ILaborRepository`, and `IReportRepository` in `SiteTrack.Core.Interfaces`.
+- **Concrete Repositories**:
+  - `UserRepository`: User CRUD, role management, OTP storage/expiry validation, notification logging, and duplicate check guards.
+  - `ProjectRepository`: Project lifecycle management, Site Manager assignment (`project_managers`), project scoping by manager, and active child deletion guards.
+  - `MaterialRepository`: Category and material catalog operations with foreign key integrity guards.
+  - `StockRepository`: Purchase recording with weighted average unit price formula, stock depletion guard (Business Rule 1), physical stock adjustments, and immutable movement logging (IN, OUT, ADJUSTMENT).
+  - `LaborRepository`: Worker catalog, daily attendance logging (unique per project/worker/date), and attendance-gated wage payment creation (Business Rule 2).
+  - `ReportRepository`: Total material expenditure and labor cost aggregations.
+- **Data Layer Integration Test Suite**: Expanded `SiteTrack.Tests` from 8 to 15 automated tests verifying connection testing, seed data loading, user uniqueness guards, manager project scoping, weighted average price recalculation, stock depletion rejection, and attendance payment gating. All 15 tests passed with 100% success rate.
+
 ## [0.2.0] - 2026-11-13
 
 ### Added

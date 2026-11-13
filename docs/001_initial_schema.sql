@@ -225,3 +225,4 @@ CREATE INDEX IF NOT EXISTS idx_material_usage_project ON material_usage(project_
 CREATE INDEX IF NOT EXISTS idx_attendance_project_date ON worker_attendance(project_id, work_date);
 CREATE INDEX IF NOT EXISTS idx_payments_project_date ON worker_payments(project_id, work_date);
 CREATE INDEX IF NOT EXISTS idx_otp_user ON otp_verifications(user_id, is_used);
+

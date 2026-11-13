@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using SiteTrack.Core;
+using SiteTrack.Core.Interfaces;
 using SiteTrack.Core.Models;
+using SiteTrack.Data.Connection;
+using SiteTrack.Data.Repositories;
 
 namespace SiteTrack.Tests
 {
@@ -15,6 +19,7 @@ namespace SiteTrack.Tests
             Console.WriteLine("SiteTrack Construction Manager — Test Suite Runner");
             Console.WriteLine("=================================================");
 
+            // --- Phase 1 Model Tests ---
             Test("User Default Status is ACTIVE", delegate {
                 User user = new User();
                 Assert(user.IsActive, "User should default to ACTIVE");
@@ -91,6 +96,191 @@ namespace SiteTrack.Tests
 
                 Result<int> valResult = Result<int>.Success(42);
                 Assert(valResult.IsSuccess && valResult.Value == 42, "Generic result holds value");
+            });
+
+            // --- Phase 2 Data Access & Repository Tests ---
+            Test("Data Layer: Connection Factory TestConnection", delegate {
+                IDbConnectionFactory factory = new DbConnectionFactory();
+                bool connected = factory.TestConnection();
+                Assert(connected, "DbConnectionFactory.TestConnection() should return true");
+            });
+
+            Test("Data Layer: Initial Seed Data is Loaded", delegate {
+                IUserRepository userRepo = new UserRepository();
+                User admin = userRepo.GetByUsername("admin");
+                Assert(admin != null, "Admin user must exist in seed data");
+                Assert(admin.IsAdmin, "Admin user must have Administrator role");
+
+                User siteMgr = userRepo.GetByUsername("sitemgr");
+                Assert(siteMgr != null, "Site manager must exist in seed data");
+
+                IProjectRepository projRepo = new ProjectRepository();
+                List<Project> projs = projRepo.GetAll();
+                Assert(projs.Count >= 3, "Seed data must contain at least 3 sample projects");
+
+                IMaterialRepository matRepo = new MaterialRepository();
+                List<MaterialCategory> cats = matRepo.GetAllCategories();
+                Assert(cats.Count >= 6, "Seed data must contain at least 6 material categories");
+
+                ILaborRepository laborRepo = new LaborRepository();
+                List<WorkerType> types = laborRepo.GetAllWorkerTypes();
+                Assert(types.Count >= 6, "Seed data must contain at least 6 worker types");
+            });
+
+            Test("Data Layer: User Repository Duplicate Username/Email Guard", delegate {
+                IUserRepository repo = new UserRepository();
+                bool threw = false;
+                try
+                {
+                    repo.Insert(new User { Username = "admin", Email = "unique@sitetrack.rw", FullName = "Dup Admin" });
+                }
+                catch (ValidationException)
+                {
+                    threw = true;
+                }
+                Assert(threw, "Inserting duplicate username must throw ValidationException");
+            });
+
+            Test("Data Layer: Project Scoping by Site Manager", delegate {
+                IUserRepository userRepo = new UserRepository();
+                User siteMgr = userRepo.GetByUsername("sitemgr");
+
+                IProjectRepository projRepo = new ProjectRepository();
+                List<Project> scopedProjs = projRepo.GetByManager(siteMgr.Id);
+                Assert(scopedProjs.Count > 0, "Site manager must have assigned projects");
+                Assert(scopedProjs.Count < projRepo.GetAll().Count, "Site manager must not see all projects across the company");
+            });
+
+            Test("Data Layer: Stock Purchase and Weighted Average Price Calculation", delegate {
+                IStockRepository stockRepo = new StockRepository();
+                int projId = 2; // Gahanga Logistics Hub
+                int matId = 1;  // Cement
+
+                // Record first purchase: 50 bags @ 12000
+                stockRepo.RecordPurchase(new MaterialPurchase {
+                    ProjectId = projId,
+                    MaterialId = matId,
+                    Quantity = 50m,
+                    UnitPrice = 12000m,
+                    SupplierName = "Cimerwa Direct",
+                    PurchaseDate = DateTime.Today,
+                    RecordedBy = 1
+                });
+
+                ProjectMaterialStock s1 = stockRepo.GetStock(projId, matId);
+                Assert(s1.QuantityAvailable == 50m, "Stock quantity should be 50");
+                Assert(s1.AverageUnitPrice == 12000m, "Average unit price should be 12000");
+
+                // Record second purchase: 50 bags @ 14000
+                stockRepo.RecordPurchase(new MaterialPurchase {
+                    ProjectId = projId,
+                    MaterialId = matId,
+                    Quantity = 50m,
+                    UnitPrice = 14000m,
+                    SupplierName = "Cimerwa Direct",
+                    PurchaseDate = DateTime.Today,
+                    RecordedBy = 1
+                });
+
+                ProjectMaterialStock s2 = stockRepo.GetStock(projId, matId);
+                Assert(s2.QuantityAvailable == 100m, "Stock quantity should be 100");
+                Assert(s2.AverageUnitPrice == 13000m, "Weighted average price should be 13000 ((50*12k + 50*14k) / 100)");
+
+                // Check movement history
+                List<MaterialStockMovement> movs = stockRepo.GetMovements(projId, matId);
+                Assert(movs.Count >= 2, "Stock movements must have at least 2 IN records");
+            });
+
+            Test("Data Layer: Stock Usage Depletion Rejection Guard (Business Rule 1)", delegate {
+                IStockRepository stockRepo = new StockRepository();
+                int projId = 2;
+                int matId = 1;
+
+                ProjectMaterialStock current = stockRepo.GetStock(projId, matId);
+                decimal excessQty = current.QuantityAvailable + 500m;
+
+                bool rejected = false;
+                try
+                {
+                    stockRepo.RecordUsage(new MaterialUsage {
+                        ProjectId = projId,
+                        MaterialId = matId,
+                        QuantityUsed = excessQty,
+                        UsageDate = DateTime.Today,
+                        ActivityDescription = "Excessive concrete pouring",
+                        RecordedBy = 2
+                    });
+                }
+                catch (ValidationException ex)
+                {
+                    rejected = true;
+                    Assert(ex.Message.Contains("Insufficient stock"), "Exception message should indicate insufficient stock");
+                }
+                Assert(rejected, "Material usage exceeding available stock must be rejected");
+            });
+
+            Test("Data Layer: Attendance-Gated Payment Creation (Business Rule 2)", delegate {
+                ILaborRepository laborRepo = new LaborRepository();
+                int projId = 1;
+                int workerId = 1; // Jean Baptiste Karekezi
+                DateTime testDate = new DateTime(2026, 11, 10);
+
+                // 1. Mark worker ABSENT
+                int attId = laborRepo.SaveAttendance(new WorkerAttendance {
+                    ProjectId = projId,
+                    WorkerId = workerId,
+                    WorkDate = testDate,
+                    AttendanceStatus = "ABSENT",
+                    WorkDescription = "Sick leave",
+                    RecordedBy = 2
+                });
+
+                // 2. Attempt to create payment for ABSENT attendance -> MUST FAIL
+                bool paymentBlocked = false;
+                try
+                {
+                    laborRepo.SavePayment(new WorkerPayment {
+                        ProjectId = projId,
+                        WorkerId = workerId,
+                        AttendanceId = attId,
+                        WorkDate = testDate,
+                        DailyRate = 15000m,
+                        AmountOwed = 15000m,
+                        AmountPaid = 15000m,
+                        PaymentStatus = "PAID",
+                        PaidBy = 2
+                    });
+                }
+                catch (ValidationException ex)
+                {
+                    paymentBlocked = true;
+                    Assert(ex.Message.Contains("PRESENT"), "Error message should require PRESENT attendance status");
+                }
+                Assert(paymentBlocked, "Creating payment for ABSENT worker must be blocked");
+
+                // 3. Now mark worker PRESENT on next day and verify payment succeeds
+                DateTime testDate2 = new DateTime(2026, 11, 11);
+                int attId2 = laborRepo.SaveAttendance(new WorkerAttendance {
+                    ProjectId = projId,
+                    WorkerId = workerId,
+                    WorkDate = testDate2,
+                    AttendanceStatus = "PRESENT",
+                    WorkDescription = "Slab casting supervision",
+                    RecordedBy = 2
+                });
+
+                int payId = laborRepo.SavePayment(new WorkerPayment {
+                    ProjectId = projId,
+                    WorkerId = workerId,
+                    AttendanceId = attId2,
+                    WorkDate = testDate2,
+                    DailyRate = 15000m,
+                    AmountOwed = 15000m,
+                    AmountPaid = 15000m,
+                    PaymentStatus = "PAID",
+                    PaidBy = 2
+                });
+                Assert(payId > 0, "Payment record should be created successfully for PRESENT attendance");
             });
 
             Console.WriteLine("-------------------------------------------------");
