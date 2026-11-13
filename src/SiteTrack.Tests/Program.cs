@@ -851,6 +851,121 @@ namespace SiteTrack.Tests
                 Assert(latestProgress >= 0 && latestProgress <= 100, "Latest progress must be bounded between 0 and 100");
             });
 
+            Test("Report Controller: Material Consumption Report Aggregates Quantities and Costs", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ReportController repCtrl = new ReportController();
+                List<MaterialConsumptionReportItem> report = repCtrl.GetMaterialConsumptionReport(1, DateTime.Today.AddDays(-30), DateTime.Today.AddDays(1));
+                Assert(report != null, "Report should not be null");
+                Assert(report.Count > 0, "Report should contain recorded usages for project 1");
+
+                foreach (MaterialConsumptionReportItem item in report)
+                {
+                    Assert(!string.IsNullOrEmpty(item.MaterialName), "MaterialName should not be empty");
+                    Assert(item.QuantityUsed > 0, "QuantityUsed should be positive");
+                    Assert(item.TotalCost >= 0, "TotalCost should be non-negative");
+                }
+            });
+
+            Test("Report Controller: Labor Wage Report Returns Present Workers and Correct Balances", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ReportController repCtrl = new ReportController();
+                List<LaborWageReportItem> report = repCtrl.GetLaborWageSummaryReport(1, DateTime.Today.AddDays(-30), DateTime.Today.AddDays(1));
+                Assert(report != null, "Report should not be null");
+                Assert(report.Count > 0, "Report should contain recorded payments for project 1");
+
+                foreach (LaborWageReportItem item in report)
+                {
+                    Assert(!string.IsNullOrEmpty(item.WorkerName), "WorkerName should not be empty");
+                    Assert(item.AmountOwed >= item.AmountPaid, "AmountOwed should be >= AmountPaid");
+                    Assert(item.BalanceDue == (item.AmountOwed - item.AmountPaid), "BalanceDue should equal AmountOwed - AmountPaid");
+                }
+            });
+
+            Test("Report Controller: Stock Movement Audit Report Returns Complete Movement History", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                ReportController repCtrl = new ReportController();
+                List<StockMovementReportItem> report = repCtrl.GetStockMovementAuditReport(1, new DateTime(2026, 1, 1), DateTime.Today.AddDays(1));
+                Assert(report != null && report.Count > 0, "Movements audit report should have entries");
+
+                bool hasIn = report.Exists(delegate(StockMovementReportItem i) { return i.MovementType == "IN"; });
+                bool hasOut = report.Exists(delegate(StockMovementReportItem i) { return i.MovementType == "OUT"; });
+                Assert(hasIn, "Audit report should contain IN records");
+                Assert(hasOut, "Audit report should contain OUT records");
+            });
+
+            Test("Report Controller: Project Executive Summary Computes Totals and Milestones", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                // Record a purchase for project 1 to ensure purchase expenditure exists
+                StockController stockCtrl = new StockController();
+                stockCtrl.RecordPurchase(1, 1, 10m, 12500m, "Inyange Hardware Ltd", DateTime.Today);
+
+                ReportController repCtrl = new ReportController();
+                ProjectExecutiveSummary summary = repCtrl.GetProjectFinancialSummary(1);
+                Assert(summary != null, "Project summary should not be null");
+                Assert(summary.ProjectId == 1, "ProjectId must match 1");
+                Assert(summary.TotalMaterialPurchases > 0, "Total material purchases should be > 0");
+                Assert(summary.TotalProjectExpenditure == (summary.TotalMaterialPurchases + summary.TotalLaborWagesPaid),
+                    "Total expenditure must equal material purchases + labor wages paid");
+            });
+
+            Test("Report Controller: Site Manager Cannot Generate Report For Unassigned Project", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123"); // Not assigned to project 3
+
+                ReportController repCtrl = new ReportController();
+                List<MaterialConsumptionReportItem> report = repCtrl.GetMaterialConsumptionReport(3, DateTime.Today.AddDays(-30), DateTime.Today);
+                Assert(report.Count == 0, "Site manager should receive empty report for unassigned project 3");
+            });
+
+            Test("CSV Exporter: Format Standard Headers and Rows", delegate {
+                List<string> headers = new List<string> { "Project", "Material", "Cost" };
+                List<List<string>> rows = new List<List<string>> {
+                    new List<string> { "Kigali Heights", "Portland Cement", "12500" },
+                    new List<string> { "Convention Center", "Steel Rebar", "26000" }
+                };
+
+                string csv = CsvExporter.FormatCsv(headers, rows);
+                Assert(csv.Contains("Project,Material,Cost"), "CSV must contain header row");
+                Assert(csv.Contains("Kigali Heights,Portland Cement,12500"), "CSV must contain first data row");
+                Assert(csv.Contains("Convention Center,Steel Rebar,26000"), "CSV must contain second data row");
+            });
+
+            Test("CSV Exporter: Properly Escapes Commas, Quotes, and Newlines", delegate {
+                string cellWithComma = CsvExporter.EscapeCell("Sand, River Coarse");
+                Assert(cellWithComma == "\"Sand, River Coarse\"", "Cell with comma must be wrapped in quotes");
+
+                string cellWithQuote = CsvExporter.EscapeCell("Steel 12mm \"High-Yield\"");
+                Assert(cellWithQuote == "\"Steel 12mm \"\"High-Yield\"\"\"", "Quotes inside cell must be doubled and wrapped");
+
+                string cellWithNewline = CsvExporter.EscapeCell("First line\nSecond line");
+                Assert(cellWithNewline.StartsWith("\"") && cellWithNewline.EndsWith("\""), "Cell with newline must be wrapped in quotes");
+            });
+
+            Test("CSV Exporter: Save UTF-8 With BOM File to Disk", delegate {
+                string tempPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "sitetrack_test_export.csv");
+                List<string> headers = new List<string> { "TestCol1", "TestCol2" };
+                List<List<string>> rows = new List<List<string>> { new List<string> { "Val1", "Val2" } };
+
+                string csv = CsvExporter.FormatCsv(headers, rows);
+                CsvExporter.SaveToFile(tempPath, csv);
+
+                Assert(System.IO.File.Exists(tempPath), "CSV export file must exist on disk");
+                byte[] bytes = System.IO.File.ReadAllBytes(tempPath);
+                Assert(bytes.Length >= 3, "File should have at least 3 bytes");
+                // Check UTF-8 BOM
+                Assert(bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF, "Exported file must have UTF-8 BOM");
+
+                try { System.IO.File.Delete(tempPath); } catch { }
+            });
+
             Console.WriteLine("-------------------------------------------------");
             Console.WriteLine(string.Format("Results: {0} PASSED, {1} FAILED", _passedCount, _failedCount));
             Console.WriteLine("=================================================");

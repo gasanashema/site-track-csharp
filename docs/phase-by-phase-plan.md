@@ -169,7 +169,7 @@ Source: plan.md
 - CSV export generates valid, properly formatted comma-separated files opening cleanly in Excel.
 - PDF / printable export produces cleanly structured paginated reports with headers, totals, and timestamps.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Phase 9 approved and marked complete. Implemented `ReportController`, `ReportModels`, `CsvExporter` (RFC 4180 with UTF-8 BOM), `PrintReportHelper` (landscape paginated print preview engine), and `UcReports` with dynamic KPI cards, CSV file export, and print preview dialog. Added 8 automated tests (total 70 tests passing).
 
 ---
 

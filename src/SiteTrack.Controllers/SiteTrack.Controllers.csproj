@@ -59,6 +59,7 @@
     <Compile Include="StockController.cs" />
     <Compile Include="LaborController.cs" />
     <Compile Include="ActivityController.cs" />
+    <Compile Include="ReportController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

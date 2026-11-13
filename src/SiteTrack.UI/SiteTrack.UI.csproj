@@ -124,6 +124,10 @@
     <Compile Include="Controls\UcActivities.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Export\PrintReportHelper.cs" />
+    <Compile Include="Controls\UcReports.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
