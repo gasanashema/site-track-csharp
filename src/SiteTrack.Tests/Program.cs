@@ -313,7 +313,7 @@ namespace SiteTrack.Tests
 
             Test("User Controller: Non-Admin Blocked from Creating User", delegate {
                 AuthController auth = new AuthController();
-                auth.Login("sitemgr", "Admin@123"); // Log in as Site Manager
+                auth.Login("sitemgr", "Admin@123");
 
                 UserController userCtrl = new UserController();
                 Result<int> res = userCtrl.CreateUser("Unauthorized Guy", "unauth", "unauth@sitetrack.rw", "Secret@2026", "SiteManager", "+250788999999");
@@ -367,7 +367,7 @@ namespace SiteTrack.Tests
                     "Kigali",
                     "Faulty project.",
                     DateTime.Today,
-                    DateTime.Today.AddDays(-10), // Earlier than start date!
+                    DateTime.Today.AddDays(-10),
                     "Planning"
                 );
                 Assert(!res.IsSuccess, "Project with EndDate earlier than StartDate must be rejected");
@@ -380,7 +380,7 @@ namespace SiteTrack.Tests
 
                 ProjectController projCtrl = new ProjectController();
                 int projId = 1;
-                int userId = 3; // Aline Uwimana
+                int userId = 3;
 
                 Result assignRes = projCtrl.AssignManager(projId, userId);
                 Assert(assignRes.IsSuccess, "Assigning manager should succeed");
@@ -397,11 +397,119 @@ namespace SiteTrack.Tests
                 auth.Login("admin", "Admin@123");
 
                 ProjectController projCtrl = new ProjectController();
-                int activeProjId = 1; // Kigali Heights has active stock and movements!
+                int activeProjId = 1;
 
                 Result res = projCtrl.DeleteProject(activeProjId);
                 Assert(!res.IsSuccess, "Deleting project with active child records must be blocked");
                 Assert(res.ErrorMessage.Contains("Active material stock") || res.ErrorMessage.Contains("Cannot delete"), "Error should explain child record guard");
+            });
+
+            // --- Phase 5 Material Catalogs & Stock Tracking Tests ---
+            Test("Material Controller: Admin Can Create Material Category", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                MaterialController matCtrl = new MaterialController();
+                Result<int> res = matCtrl.CreateCategory("Roofing & Trusses", "Corrugated iron sheets, timber trusses, ridge caps");
+                Assert(res.IsSuccess, "Admin should be able to create category");
+                Assert(res.Value > 0, "Created category should have valid ID");
+            });
+
+            Test("Material Controller: Non-Admin Blocked from Creating Category", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123");
+
+                MaterialController matCtrl = new MaterialController();
+                Result<int> res = matCtrl.CreateCategory("Unauthorized Category", "Description");
+                Assert(!res.IsSuccess, "Site Manager must be blocked from creating categories");
+                Assert(res.ErrorMessage.Contains("Access Denied"), "Error should state Access Denied");
+            });
+
+            Test("Material Controller: Block Deleting Category with Linked Materials", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                MaterialController matCtrl = new MaterialController();
+                Result res = matCtrl.DeleteCategory(1); // Category 1 has Dangote Cement linked!
+                Assert(!res.IsSuccess, "Deleting category with linked materials must be blocked");
+                Assert(res.ErrorMessage.Contains("linked"), "Error message should mention linked materials");
+            });
+
+            Test("Material Controller: Admin Can Create Master Material with Positive Price", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                MaterialController matCtrl = new MaterialController();
+                Result<int> res = matCtrl.CreateMaterial(1, "Rapid-Hardening Cement 52.5N", "Bags", 15500m, "Fast-setting high-strength cement");
+                Assert(res.IsSuccess, "Admin should be able to create master material");
+                Assert(res.Value > 0, "New material should have positive ID");
+            });
+
+            Test("Material Controller: Reject Material with Negative Price", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                MaterialController matCtrl = new MaterialController();
+                Result<int> res = matCtrl.CreateMaterial(1, "Negative Price Sand", "Tons", -500m, "Invalid price");
+                Assert(!res.IsSuccess, "Material with negative price must be rejected");
+            });
+
+            Test("Stock Controller: Purchase Atomically Updates Stock and Calculates Weighted Average", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                int projId = 3; // Nyagatare Modern Secondary School
+                int matId = 2;  // Clean River Sand (Starts at 0 stock)
+
+                // 1. First delivery: 20 tons @ 15,000 RWF
+                Result<int> p1 = stockCtrl.RecordPurchase(projId, matId, 20m, 15000m, "Nyabarongo Sand Quarries", DateTime.Today);
+                Assert(p1.IsSuccess, "First purchase should succeed");
+
+                ProjectMaterialStock s1 = stockCtrl.GetMaterialStock(projId, matId);
+                Assert(s1.QuantityAvailable == 20m, "Available quantity should be 20");
+                Assert(s1.AverageUnitPrice == 15000m, "Average unit price should be 15,000");
+
+                // 2. Second delivery: 10 tons @ 18,000 RWF
+                // Weighted average: ((20 * 15000) + (10 * 18000)) / (20 + 10) = (300,000 + 180,000) / 30 = 480,000 / 30 = 16,000 RWF
+                Result<int> p2 = stockCtrl.RecordPurchase(projId, matId, 10m, 18000m, "Akagera Aggregates", DateTime.Today);
+                Assert(p2.IsSuccess, "Second purchase should succeed");
+
+                ProjectMaterialStock s2 = stockCtrl.GetMaterialStock(projId, matId);
+                Assert(s2.QuantityAvailable == 30m, "Available quantity should be 30");
+                Assert(s2.AverageUnitPrice == 16000m, string.Format("Weighted average should be 16,000 RWF, got {0}", s2.AverageUnitPrice));
+
+                // 3. Verify IN movement audit trail
+                List<MaterialStockMovement> movs = stockCtrl.GetMovements(projId, matId);
+                Assert(movs.Count >= 2, "Stock movements must have at least 2 entries");
+                Assert(movs[0].MovementType == "IN", "Movement type must be IN");
+            });
+
+            Test("Stock Controller: Site Manager Cannot Purchase For Unassigned Project", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("sitemgr", "Admin@123"); // sitemgr is assigned to project 1 and 2, but NOT project 3
+
+                StockController stockCtrl = new StockController();
+                Result<int> res = stockCtrl.RecordPurchase(3, 1, 10m, 12000m, "Illegal Supplier", DateTime.Today);
+                Assert(!res.IsSuccess, "Site manager should not be allowed to record purchases for unassigned project");
+                Assert(res.ErrorMessage.Contains("Access Denied"), "Error message should indicate Access Denied");
+            });
+
+            Test("Stock Controller: Low Stock Detection on Project Stock", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+
+                StockController stockCtrl = new StockController();
+                int projId = 1; // Kigali Heights
+                List<ProjectMaterialStock> stocks = stockCtrl.GetProjectStock(projId);
+                Assert(stocks.Count > 0, "Project 1 must have stock items");
+
+                // Check stock low stock calculation
+                foreach (ProjectMaterialStock s in stocks)
+                {
+                    bool calculatedLow = s.QuantityAvailable <= s.MinimumQuantity;
+                    Assert(s.IsLowStock == calculatedLow, "IsLowStock property must match QuantityAvailable <= MinimumQuantity");
+                }
             });
 
             Console.WriteLine("-------------------------------------------------");

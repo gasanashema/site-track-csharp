@@ -299,6 +299,11 @@ namespace SiteTrack.UI.Forms
                 return new Controls.UcProjects();
             }
 
+            if (string.Equals(module, "Materials & Stock", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Controls.UcStock();
+            }
+
             Panel card = new Panel();
             card.BackColor = Color.White;
             card.BorderStyle = BorderStyle.FixedSingle;

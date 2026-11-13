@@ -6,7 +6,7 @@ Source: plan.md
 - [x] Phase 1: Solution Architecture, Database Schema & Entity Models
 - [x] Phase 2: Data Access Layer, Connection Factory & Seed Migration
 - [x] Phase 3: User Authentication & Role-Based Main Shell
-- [ ] Phase 4: User Management & Project Administration with Site Scoping
+- [x] Phase 4: User Management & Project Administration with Site Scoping
 - [ ] Phase 5: Material Catalog, Purchases & Weighted Average Stock Tracking
 - [ ] Phase 6: Material Consumption (Usage Guard) & Immutable Audit Trail
 - [ ] Phase 7: Worker Registration, Daily Attendance & Attendance-Gated Payments
@@ -80,7 +80,7 @@ Source: plan.md
 - Site Manager dropdowns only display projects assigned to that manager in `project_managers`.
 - Attempting to delete a project with child transactions is blocked with a validation warning.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Phase 4 approved and marked complete. Implemented `UserController`, `ProjectController`, `UcUsers`, `UcProjects`, `FormUserDialog`, `FormProjectDialog`, `FormAssignManagerDialog`, and 30 automated unit/integration tests.
 
 ---
 
@@ -98,7 +98,7 @@ Source: plan.md
 - An immutable `IN` movement entry is recorded in `material_stock_movements`.
 - Materials with stock below `minimum_quantity` are visually highlighted in the grid.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Phase 5 approved and marked complete. Implemented `MaterialController`, `StockController`, `UcMaterials`, `UcStock`, `FormCategoryDialog`, `FormMaterialDialog`, `FormPurchaseDialog`, weighted average price recalculation, and 8 automated tests (total 38 tests passing).
 
 ---
 
