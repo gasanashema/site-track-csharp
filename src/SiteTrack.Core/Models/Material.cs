@@ -52,3 +52,4 @@ namespace SiteTrack.Core.Models
         }
     }
 }
+

@@ -49,10 +49,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connection\DbConnectionFactory.cs" />
+    <Compile Include="Connection\SiteTrackDataStore.cs" />
+    <Compile Include="DbHelper.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
+    <Compile Include="Repositories\ProjectRepository.cs" />
+    <Compile Include="Repositories\MaterialRepository.cs" />
+    <Compile Include="Repositories\StockRepository.cs" />
+    <Compile Include="Repositories\LaborRepository.cs" />
+    <Compile Include="Repositories\ReportRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\001_initial_schema.sql" />
+    <None Include="Scripts\002_seed_data.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
+
