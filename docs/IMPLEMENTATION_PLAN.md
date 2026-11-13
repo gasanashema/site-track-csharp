@@ -141,9 +141,8 @@ SiteTrack/
 
 ### Milestone 2: Authentication, Security & Role Scoping
 - [ ] Implement `IUserRepository` and `UserRepository` with password hashing (PBKDF2/SHA-256).
-- [ ] Implement `AuthController` handling login credentials and state management.
-- [ ] Implement OTP generation, expiration logic (5 minutes validity), and logging to `notification_logs`.
-- [ ] Build `FormLogin` and `FormOtpDialog` with user-friendly validation.
+- [ ] Implement `AuthController` handling direct login credentials, active status validation, and session context creation.
+- [ ] Build `FormLogin` with username/password inputs and error provider validation (direct authentication; OTP excluded per user directive).
 - [ ] Implement session context storing active user ID, role, and assigned projects.
 
 ### Milestone 3: Shell Navigation & User Management

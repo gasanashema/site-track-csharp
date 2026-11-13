@@ -93,3 +93,4 @@ namespace SiteTrack.Core.Interfaces
         List<ProjectMaterialStock> GetLowStockAlerts(int? projectId);
     }
 }
+

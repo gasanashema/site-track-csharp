@@ -4,8 +4,8 @@ Source: plan.md
 
 ## Progress
 - [x] Phase 1: Solution Architecture, Database Schema & Entity Models
-- [ ] Phase 2: Data Access Layer, Connection Factory & Seed Migration
-- [ ] Phase 3: Authentication, OTP Verification & Role-Based Main Shell
+- [x] Phase 2: Data Access Layer, Connection Factory & Seed Migration
+- [ ] Phase 3: User Authentication & Role-Based Main Shell
 - [ ] Phase 4: User Management & Project Administration with Site Scoping
 - [ ] Phase 5: Material Catalog, Purchases & Weighted Average Stock Tracking
 - [ ] Phase 6: Material Consumption (Usage Guard) & Immutable Audit Trail
@@ -45,24 +45,23 @@ Source: plan.md
 - Initial seed data creates an active Admin user and default reference catalogs.
 - Repositories run parameterized SQL queries preventing any SQL injection vulnerability.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Phase 2 approved and marked complete. Implemented `DbConnectionFactory`, `SiteTrackDataStore`, `DbHelper`, 6 concrete repositories, and 15 automated integration tests.
 
 ---
 
-### Phase 3: Authentication, OTP Verification & Role-Based Main Shell
-**Goal:** Deliver secure user authentication, time-limited OTP simulation, and the master navigation shell with role-based UI restriction.
+### Phase 3: User Authentication & Role-Based Main Shell
+**Goal:** Deliver secure direct user authentication (username and password) and the master navigation shell with role-based UI restriction (OTP challenge omitted per user directive).
 **Tasks:**
 - Implement secure password hashing and verification (PBKDF2/SHA-256).
-- Implement `AuthController` with login validation, OTP code generation, 5-minute expiry enforcement, and `notification_logs` recording.
-- Build `FormLogin` with username/password input and error provider validation.
-- Build `FormOtpDialog` prompting for the simulated OTP code.
-- Build `FormMainShell` featuring a modern responsive sidebar, status bar showing logged-in user and role, and conditional menu visibility (Admin vs. Site Manager).
+- Implement `AuthController` with login validation, active status enforcement, and session context creation.
+- Build `FormLogin` with username/password inputs, keyboard shortcut navigation, and ErrorProvider validation.
+- Build `FormMainShell` featuring a modern responsive sidebar, status bar showing logged-in user and role, logout flow, and conditional navigation visibility (Admin vs. Site Manager).
 **Acceptance criteria:**
 - Users cannot log in with invalid credentials or if their account is inactive.
-- OTP code is generated, logged to `notification_logs`, and must be verified within 5 minutes before granting access to `FormMainShell`.
+- Valid credentials authenticate immediately and open `FormMainShell` without any OTP challenge.
 - Admin sees all navigation modules; Site Manager sees only operational modules for assigned projects.
 **Changelog:**
-- (empty until review)
+- 2026-11-13: Scope change applied per user directive: OTP verification removed; Phase 3 streamlined to direct username/password authentication.
 
 ---
 

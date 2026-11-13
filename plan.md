@@ -57,9 +57,9 @@ The application adheres strictly to the **Model-View-Controller (MVC)** design p
 ## 3. Scope Definition
 
 ### 3.1 In Scope
-1. **User Authentication & OTP Verification**:
-   - Username and password verification with secure hashing.
-   - Time-limited OTP generation and verification dialog (email/SMS simulation logged to `notification_logs`).
+1. **Direct User Authentication**:
+   - Username and password verification with secure hashing (PBKDF2/SHA-256).
+   - Instant authentication without secondary OTP challenge (OTP omitted per user directive).
    - Role-based UI activation (Administrator vs. Site Manager).
 2. **User Management (Admin)**:
    - Full CRUD for users (`Administrator`, `Site Manager`), account activation/deactivation, duplicate check on username and email.
@@ -87,6 +87,7 @@ The application adheres strictly to the **Model-View-Controller (MVC)** design p
    - Export to CSV and PDF/Excel.
 
 ### 3.2 Out of Scope
+- OTP-based login verification and secondary SMS/email code challenges (omitted per user directive).
 - Full corporate accounting, general ledger, tax computation, or formal invoice billing.
 - Procurement supplier portal and bidding workflows.
 - BIM or CAD integrations.
@@ -177,9 +178,9 @@ The MVP is complete when:
 
 ## 9. Decisions
 
+- **Authentication Flow**: Direct username and password authentication with secure SHA-256/PBKDF2 hashing. OTP challenge omitted per user directive (2026-11-13) to streamline the desktop evaluation workflow.
 - **Architecture**: WinForms desktop application with MVC pattern as mandated by `docs/todo.md`.
 - **Database Engine**: Relational database (PostgreSQL with Npgsql or embedded SQLite/LocalDB for portable demonstration), with pure ADO.NET or lightweight repository mapping to ensure full compatibility with .NET Framework WinForms.
-- **OTP Verification Flow**: Simulated via in-app verification dialog displaying the generated OTP code alongside logging to `notification_logs`, satisfying requirement 4.16 without external paid API dependencies.
 - **Reporting Engine**: Built-in CSV export engine and formatted printable / PDF report generator using native WinForms reporting or document generation.
 
 ---
@@ -193,6 +194,7 @@ The MVP is complete when:
 
 ## 11. Out of Scope
 
+- OTP verification prompts and SMS simulation workflows (excluded per user directive).
 - External live SMS gateway subscriptions (e.g. Twilio) requiring credit.
 - Direct hardware integration with biometric time-clocks or turnstiles.
 - Web or mobile client frontends (desktop WinForms is the target).
