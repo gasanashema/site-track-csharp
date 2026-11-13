@@ -133,11 +133,11 @@ SiteTrack/
 ## 4. Implementation Checklist by Milestones
 
 ### Milestone 1: Core Foundation & Data Access
-- [ ] Initialize repository and project structure (`SiteTrack.sln`).
-- [ ] Implement SQL schema creation scripts for all 16 tables.
+- [x] Initialize repository and project structure (`SiteTrack.sln`).
+- [x] Implement SQL schema creation scripts for all 16 tables.
 - [ ] Implement database connection factory and test connection handler.
 - [ ] Implement seed script with default Administrator account (`admin`/`Admin@123`), sample projects, worker types, and material categories.
-- [ ] Implement POCO entity models in `SiteTrack.Core.Models`.
+- [x] Implement POCO entity models in `SiteTrack.Core.Models`.
 
 ### Milestone 2: Authentication, Security & Role Scoping
 - [ ] Implement `IUserRepository` and `UserRepository` with password hashing (PBKDF2/SHA-256).
@@ -226,3 +226,4 @@ SiteTrack/
 - **Data Integrity Tests**:
   - Attempting to delete a project with child records must be blocked.
   - Attempting duplicate attendance on the same day for a worker must throw a clean UI validation error.
+
