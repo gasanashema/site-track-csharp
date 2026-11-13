@@ -7,11 +7,11 @@ Source: plan.md
 - [x] Phase 2: Data Access Layer, Connection Factory & Seed Migration
 - [x] Phase 3: User Authentication & Role-Based Main Shell
 - [x] Phase 4: User Management & Project Administration with Site Scoping
-- [ ] Phase 5: Material Catalog, Purchases & Weighted Average Stock Tracking
-- [ ] Phase 6: Material Consumption (Usage Guard) & Immutable Audit Trail
-- [ ] Phase 7: Worker Registration, Daily Attendance & Attendance-Gated Payments
-- [ ] Phase 8: Site Activity Tracking & Progress Monitoring
-- [ ] Phase 9: Reports & Data Export (PDF, Excel, CSV)
+- [x] Phase 5: Material Catalog, Purchases & Weighted Average Stock Tracking
+- [x] Phase 6: Material Consumption (Usage Guard) & Immutable Audit Trail
+- [x] Phase 7: Worker Registration, Daily Attendance & Attendance-Gated Payments
+- [x] Phase 8: Site Activity Tracking & Progress Monitoring
+- [x] Phase 9: Reports & Data Export (PDF, Excel, CSV)
 - [ ] Phase 10: End-to-End Verification, Automated Tests & Release Polish
 
 ## Phases
