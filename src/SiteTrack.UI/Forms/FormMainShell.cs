@@ -286,6 +286,19 @@ namespace SiteTrack.UI.Forms
 
         private Control CreateViewForModule(string module)
         {
+            if (string.Equals(module, "User Management", StringComparison.OrdinalIgnoreCase))
+            {
+                if (BaseController.IsAdmin)
+                {
+                    return new Controls.UcUsers();
+                }
+            }
+
+            if (string.Equals(module, "Projects", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Controls.UcProjects();
+            }
+
             Panel card = new Panel();
             card.BackColor = Color.White;
             card.BorderStyle = BorderStyle.FixedSingle;
@@ -377,3 +390,4 @@ namespace SiteTrack.UI.Forms
         }
     }
 }
+

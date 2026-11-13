@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="BaseController.cs" />
     <Compile Include="AuthController.cs" />
+    <Compile Include="UserController.cs" />
+    <Compile Include="ProjectController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -146,16 +146,16 @@ SiteTrack/
 - [x] Implement session context storing active user ID, role, and assigned projects.
 
 ### Milestone 3: Shell Navigation & User Management
-- [ ] Build `FormMainShell` with modern sidebar navigation and role-based access control.
-- [ ] Implement `UserController` and `UcUsers` (Admin only) for user CRUD, role assignment, and account activation/deactivation.
-- [ ] Implement validation preventing duplicate usernames and emails.
+- [x] Build `FormMainShell` with modern sidebar navigation and role-based access control.
+- [x] Implement `UserController` and `UcUsers` (Admin only) for user CRUD, role assignment, and account activation/deactivation.
+- [x] Implement validation preventing duplicate usernames and emails.
 
 ### Milestone 4: Project Management & Site Assignment
-- [ ] Implement `ProjectRepository` and `ProjectController`.
-- [ ] Build `UcProjects` for creating/editing projects (Planning, Ongoing, Completed, Cancelled).
-- [ ] Build Site Manager assignment UI (`project_managers` mapping).
-- [ ] Enforce project scoping: Site Managers see only assigned projects in project selectors.
-- [ ] Implement deletion guards preventing removal of projects with active transactions.
+- [x] Implement `ProjectRepository` and `ProjectController`.
+- [x] Build `UcProjects` for creating/editing projects (Planning, Ongoing, Completed, Cancelled).
+- [x] Build Site Manager assignment UI (`project_managers` mapping).
+- [x] Enforce project scoping: Site Managers see only assigned projects in project selectors.
+- [x] Implement deletion guards preventing removal of projects with active transactions.
 
 ### Milestone 5: Material Catalogs & Purchase Management
 - [ ] Implement `MaterialRepository` and `MaterialController`.
