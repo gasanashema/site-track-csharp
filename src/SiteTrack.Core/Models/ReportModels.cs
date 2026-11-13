@@ -69,3 +69,4 @@ namespace SiteTrack.Core.Models
         public int LowStockAlertsCount { get; set; }
     }
 }
+

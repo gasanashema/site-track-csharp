@@ -5,6 +5,21 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-11-13
+
+### Added
+- **Full End-to-End System Verification**: Validated complete lifecycle integration covering user login, multi-project administration, material procurement, moving weighted average cost accounting, material usage with real-time stock depletion guards, craftsman registration, daily attendance logging, attendance-gated wage payment vouchers, daily site activity monitoring with progress percentage boundaries, and management report exports.
+- **Rule Verification Test Expansion**: Added 6 comprehensive automated tests to `SiteTrack.Tests` explicitly targeting:
+  - Technical Rule 1: Whitespace and empty string input rejection across projects, materials, and workers.
+  - Technical Rule 2: Zero and negative numeric value rejection for quantities, unit prices, and wage rates.
+  - Technical Rule 3: Single-day task acceptance and invalid reverse date sequence rejection.
+  - Business Rule 4: Cross-domain Site Manager project scoping enforcement.
+  - Business Rule 5: Project deletion blocking when active material stock or wage records exist.
+  - End-to-End Lifecycle Integration: Full multi-module transaction verification.
+- **Final Test Suite**: Expanded automated test suite to 76 tests with 100% pass rate in both Debug and Release configurations.
+- **Cross-Platform Containerization**: Added multi-stage `Dockerfile` and `docker-compose.yml` for automated headless builds and test execution across Linux and Windows container hosts.
+- **Comprehensive User & Administrator Guide**: Created `docs/USER_GUIDE.md` detailing system architecture, 16-table relational database schema, seed credentials, rule definitions, step-by-step walkthroughs, and build/run instructions.
+
 ## [0.9.5] - 2026-11-13
 
 ### Added
