@@ -105,7 +105,7 @@ namespace SiteTrack.Data.Connection
                 if (Users.Count > 0) return;
 
                 // 1. Users (Password is "Admin@123" -> SHA-256 hash)
-                string defaultHash = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3";
+                string defaultHash = "e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7";
                 Users.Add(new User { Id = NextUserId(), FullName = "System Administrator", Username = "admin", Email = "admin@sitetrack.rw", Password = defaultHash, Role = "Administrator", Phone = "+250788100001", Status = "ACTIVE" });
                 Users.Add(new User { Id = NextUserId(), FullName = "Patrick Mutabazi", Username = "sitemgr", Email = "pmutabazi@sitetrack.rw", Password = defaultHash, Role = "SiteManager", Phone = "+250788100002", Status = "ACTIVE" });
                 Users.Add(new User { Id = NextUserId(), FullName = "Aline Uwimana", Username = "aline.mgr", Email = "aline@sitetrack.rw", Password = defaultHash, Role = "SiteManager", Phone = "+250788100003", Status = "ACTIVE" });

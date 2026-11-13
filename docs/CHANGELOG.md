@@ -5,6 +5,20 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-11-13
+
+### Added
+- **Password Hasher (SHA-256)**: Implemented cryptographic utility `PasswordHasher` in `SiteTrack.Core.Security` for computing and verifying standard SHA-256 hashes.
+- **Authentication Controller**: Built `AuthController` in `SiteTrack.Controllers` providing direct credential authentication, deactivated account guards, session tracking (`CurrentUser`, `IsAdmin`), and notification logging.
+- **Desktop Login View (FormLogin)**: Developed modern desktop authentication form with credentials input, password masking with toggle, ErrorProvider validation, and one-click demo credentials filling for evaluation.
+- **Master Navigation Shell (FormMainShell)**: Created comprehensive WinForms application frame featuring responsive dark slate sidebar, status bar with live user/role/database indicators, and dynamic module loading.
+- **Role-Based UI Restructuring**: Implemented strict role separation where Administrators see all modules including `User Management`, and Site Managers operate in site-scoped mode with administrative sections hidden.
+- **Session Lifecycle & Logout Loop**: Integrated application lifecycle in `Program.cs` enabling clean logout back to login and application exit.
+- **Authentication & Security Test Suite**: Added 7 automated tests to `SiteTrack.Tests` verifying SHA-256 hash vectors, credential validation, deactivated account blocking, admin vs. site manager session states, and logout cleanup. All 22 tests in the suite passed with 100% success rate.
+
+### Changed
+- **Direct Login Workflow**: Omitted secondary OTP verification dialogs per user directive, streamlining the desktop login flow directly to the role-based main shell.
+
 ## [0.3.0] - 2026-11-13
 
 ### Added

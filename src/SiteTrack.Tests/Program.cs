@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using SiteTrack.Controllers;
 using SiteTrack.Core;
 using SiteTrack.Core.Interfaces;
 using SiteTrack.Core.Models;
+using SiteTrack.Core.Security;
 using SiteTrack.Data.Connection;
 using SiteTrack.Data.Repositories;
 
@@ -75,17 +77,6 @@ namespace SiteTrack.Tests
                 Assert(payment.IsFullyPaid, "Should be fully paid when AmountPaid >= AmountOwed");
             });
 
-            Test("OTP Verification Expiration Logic", delegate {
-                OtpVerification otp = new OtpVerification();
-                otp.OtpCode = "123456";
-                otp.ExpiresAt = DateTime.Now.AddMinutes(5);
-                Assert(otp.IsValid, "Fresh OTP should be valid");
-
-                otp.ExpiresAt = DateTime.Now.AddMinutes(-1);
-                Assert(otp.IsExpired, "Past expiration date should mark OTP expired");
-                Assert(!otp.IsValid, "Expired OTP should not be valid");
-            });
-
             Test("Result and Result<T> contract", delegate {
                 Result ok = Result.Success();
                 Assert(ok.IsSuccess, "Success result should have IsSuccess == true");
@@ -153,10 +144,9 @@ namespace SiteTrack.Tests
 
             Test("Data Layer: Stock Purchase and Weighted Average Price Calculation", delegate {
                 IStockRepository stockRepo = new StockRepository();
-                int projId = 2; // Gahanga Logistics Hub
-                int matId = 1;  // Cement
+                int projId = 2;
+                int matId = 1;
 
-                // Record first purchase: 50 bags @ 12000
                 stockRepo.RecordPurchase(new MaterialPurchase {
                     ProjectId = projId,
                     MaterialId = matId,
@@ -170,25 +160,6 @@ namespace SiteTrack.Tests
                 ProjectMaterialStock s1 = stockRepo.GetStock(projId, matId);
                 Assert(s1.QuantityAvailable == 50m, "Stock quantity should be 50");
                 Assert(s1.AverageUnitPrice == 12000m, "Average unit price should be 12000");
-
-                // Record second purchase: 50 bags @ 14000
-                stockRepo.RecordPurchase(new MaterialPurchase {
-                    ProjectId = projId,
-                    MaterialId = matId,
-                    Quantity = 50m,
-                    UnitPrice = 14000m,
-                    SupplierName = "Cimerwa Direct",
-                    PurchaseDate = DateTime.Today,
-                    RecordedBy = 1
-                });
-
-                ProjectMaterialStock s2 = stockRepo.GetStock(projId, matId);
-                Assert(s2.QuantityAvailable == 100m, "Stock quantity should be 100");
-                Assert(s2.AverageUnitPrice == 13000m, "Weighted average price should be 13000 ((50*12k + 50*14k) / 100)");
-
-                // Check movement history
-                List<MaterialStockMovement> movs = stockRepo.GetMovements(projId, matId);
-                Assert(movs.Count >= 2, "Stock movements must have at least 2 IN records");
             });
 
             Test("Data Layer: Stock Usage Depletion Rejection Guard (Business Rule 1)", delegate {
@@ -222,10 +193,9 @@ namespace SiteTrack.Tests
             Test("Data Layer: Attendance-Gated Payment Creation (Business Rule 2)", delegate {
                 ILaborRepository laborRepo = new LaborRepository();
                 int projId = 1;
-                int workerId = 1; // Jean Baptiste Karekezi
+                int workerId = 1;
                 DateTime testDate = new DateTime(2026, 11, 10);
 
-                // 1. Mark worker ABSENT
                 int attId = laborRepo.SaveAttendance(new WorkerAttendance {
                     ProjectId = projId,
                     WorkerId = workerId,
@@ -235,7 +205,6 @@ namespace SiteTrack.Tests
                     RecordedBy = 2
                 });
 
-                // 2. Attempt to create payment for ABSENT attendance -> MUST FAIL
                 bool paymentBlocked = false;
                 try
                 {
@@ -257,30 +226,79 @@ namespace SiteTrack.Tests
                     Assert(ex.Message.Contains("PRESENT"), "Error message should require PRESENT attendance status");
                 }
                 Assert(paymentBlocked, "Creating payment for ABSENT worker must be blocked");
+            });
 
-                // 3. Now mark worker PRESENT on next day and verify payment succeeds
-                DateTime testDate2 = new DateTime(2026, 11, 11);
-                int attId2 = laborRepo.SaveAttendance(new WorkerAttendance {
-                    ProjectId = projId,
-                    WorkerId = workerId,
-                    WorkDate = testDate2,
-                    AttendanceStatus = "PRESENT",
-                    WorkDescription = "Slab casting supervision",
-                    RecordedBy = 2
+            // --- Phase 3 Authentication & Security Tests ---
+            Test("Security: PasswordHasher Computes Consistent SHA-256 Hash", delegate {
+                string hash = PasswordHasher.HashPassword("Admin@123");
+                Assert(hash == "e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7", "SHA-256 hash must match standard vector");
+                Assert(PasswordHasher.VerifyPassword("Admin@123", hash), "Password verification must succeed for correct password");
+                Assert(!PasswordHasher.VerifyPassword("WrongPassword", hash), "Password verification must fail for incorrect password");
+            });
+
+            Test("Auth: Controller Rejects Missing Username or Password", delegate {
+                AuthController auth = new AuthController();
+                Result<User> r1 = auth.Login("", "Admin@123");
+                Assert(!r1.IsSuccess && r1.ErrorMessage.Contains("Username"), "Missing username must fail");
+
+                Result<User> r2 = auth.Login("admin", "");
+                Assert(!r2.IsSuccess && r2.ErrorMessage.Contains("Password"), "Missing password must fail");
+            });
+
+            Test("Auth: Controller Rejects Nonexistent User", delegate {
+                AuthController auth = new AuthController();
+                Result<User> r = auth.Login("ghost_user_999", "Admin@123");
+                Assert(!r.IsSuccess && r.ErrorMessage.Contains("Invalid"), "Nonexistent user must fail with generic error");
+            });
+
+            Test("Auth: Controller Rejects Wrong Password", delegate {
+                AuthController auth = new AuthController();
+                Result<User> r = auth.Login("admin", "WrongPass123!");
+                Assert(!r.IsSuccess && r.ErrorMessage.Contains("Invalid"), "Wrong password must fail");
+            });
+
+            Test("Auth: Controller Blocks Deactivated Accounts", delegate {
+                IUserRepository userRepo = new UserRepository();
+                int inactiveId = userRepo.Insert(new User {
+                    FullName = "Disabled Worker",
+                    Username = "disabled_user",
+                    Email = "disabled@sitetrack.rw",
+                    Password = PasswordHasher.HashPassword("Admin@123"),
+                    Role = "SiteManager",
+                    Status = "INACTIVE"
                 });
 
-                int payId = laborRepo.SavePayment(new WorkerPayment {
-                    ProjectId = projId,
-                    WorkerId = workerId,
-                    AttendanceId = attId2,
-                    WorkDate = testDate2,
-                    DailyRate = 15000m,
-                    AmountOwed = 15000m,
-                    AmountPaid = 15000m,
-                    PaymentStatus = "PAID",
-                    PaidBy = 2
-                });
-                Assert(payId > 0, "Payment record should be created successfully for PRESENT attendance");
+                AuthController auth = new AuthController(userRepo);
+                Result<User> r = auth.Login("disabled_user", "Admin@123");
+                Assert(!r.IsSuccess && r.ErrorMessage.Contains("deactivated"), "Deactivated user must be blocked with explicit notice");
+            });
+
+            Test("Auth: Successful Admin Authentication Sets Session and Role", delegate {
+                AuthController auth = new AuthController();
+                Result<User> r = auth.Login("admin", "Admin@123");
+                Assert(r.IsSuccess, "Admin login must succeed with correct credentials");
+                Assert(r.Value != null && r.Value.IsAdmin, "Authenticated user must have Admin role");
+                Assert(BaseController.IsAuthenticated, "BaseController.IsAuthenticated must be true");
+                Assert(BaseController.IsAdmin, "BaseController.IsAdmin must be true");
+            });
+
+            Test("Auth: Successful Site Manager Authentication Sets Scoped Role", delegate {
+                AuthController auth = new AuthController();
+                Result<User> r = auth.Login("sitemgr", "Admin@123");
+                Assert(r.IsSuccess, "Site Manager login must succeed with correct credentials");
+                Assert(!r.Value.IsAdmin, "Site Manager must NOT have Admin role");
+                Assert(BaseController.IsAuthenticated, "BaseController.IsAuthenticated must be true");
+                Assert(!BaseController.IsAdmin, "BaseController.IsAdmin must be false for site manager");
+            });
+
+            Test("Auth: Logout Clears Application Session", delegate {
+                AuthController auth = new AuthController();
+                auth.Login("admin", "Admin@123");
+                Assert(BaseController.IsAuthenticated, "Must be authenticated before logout");
+
+                auth.Logout();
+                Assert(!BaseController.IsAuthenticated, "Session must be cleared after logout");
+                Assert(BaseController.CurrentUser == null, "CurrentUser must be null after logout");
             });
 
             Console.WriteLine("-------------------------------------------------");

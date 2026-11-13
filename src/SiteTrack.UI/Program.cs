@@ -1,28 +1,10 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
+using SiteTrack.Controllers;
+using SiteTrack.UI.Forms;
 
 namespace SiteTrack.UI
 {
-    public class FormMainShellPlaceholder : Form
-    {
-        public FormMainShellPlaceholder()
-        {
-            this.Text = "SiteTrack Construction Manager";
-            this.Size = new Size(1024, 700);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
-
-            Label lbl = new Label();
-            lbl.Text = "SiteTrack Construction Manager (.NET WinForms MVC)\nFoundation initialized successfully.";
-            lbl.AutoSize = false;
-            lbl.Dock = DockStyle.Fill;
-            lbl.TextAlign = ContentAlignment.MiddleCenter;
-            lbl.Font = new Font("Segoe UI", 12f, FontStyle.Bold);
-            this.Controls.Add(lbl);
-        }
-    }
-
     static class Program
     {
         [STAThread]
@@ -30,8 +12,37 @@ namespace SiteTrack.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMainShellPlaceholder());
+
+            bool keepRunning = true;
+            while (keepRunning)
+            {
+                using (FormLogin loginForm = new FormLogin())
+                {
+                    DialogResult loginResult = loginForm.ShowDialog();
+                    if (loginResult != DialogResult.OK)
+                    {
+                        // User cancelled or closed login dialog -> exit application
+                        keepRunning = false;
+                        break;
+                    }
+
+                    // User authenticated successfully -> open Main Shell
+                    using (FormMainShell shellForm = new FormMainShell())
+                    {
+                        DialogResult shellResult = shellForm.ShowDialog();
+                        if (shellResult == DialogResult.Retry)
+                        {
+                            // Sign Out clicked -> loop back to login form
+                            keepRunning = true;
+                        }
+                        else
+                        {
+                            // Shell closed -> exit application
+                            keepRunning = false;
+                        }
+                    }
+                }
+            }
         }
     }
 }
-

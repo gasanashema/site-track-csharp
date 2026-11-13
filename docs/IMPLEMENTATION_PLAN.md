@@ -140,10 +140,10 @@ SiteTrack/
 - [x] Implement POCO entity models in `SiteTrack.Core.Models`.
 
 ### Milestone 2: Authentication, Security & Role Scoping
-- [ ] Implement `IUserRepository` and `UserRepository` with password hashing (PBKDF2/SHA-256).
-- [ ] Implement `AuthController` handling direct login credentials, active status validation, and session context creation.
-- [ ] Build `FormLogin` with username/password inputs and error provider validation (direct authentication; OTP excluded per user directive).
-- [ ] Implement session context storing active user ID, role, and assigned projects.
+- [x] Implement `IUserRepository` and `UserRepository` with password hashing (PBKDF2/SHA-256).
+- [x] Implement `AuthController` handling direct login credentials, active status validation, and session context creation.
+- [x] Build `FormLogin` with username/password inputs and error provider validation (direct authentication; OTP excluded per user directive).
+- [x] Implement session context storing active user ID, role, and assigned projects.
 
 ### Milestone 3: Shell Navigation & User Management
 - [ ] Build `FormMainShell` with modern sidebar navigation and role-based access control.
