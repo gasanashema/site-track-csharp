@@ -5,7 +5,7 @@ Source: plan.md
 ## Progress
 - [x] Phase 1: Solution Architecture, Database Schema & Entity Models
 - [x] Phase 2: Data Access Layer, Connection Factory & Seed Migration
-- [ ] Phase 3: User Authentication & Role-Based Main Shell
+- [x] Phase 3: User Authentication & Role-Based Main Shell
 - [ ] Phase 4: User Management & Project Administration with Site Scoping
 - [ ] Phase 5: Material Catalog, Purchases & Weighted Average Stock Tracking
 - [ ] Phase 6: Material Consumption (Usage Guard) & Immutable Audit Trail
@@ -61,7 +61,7 @@ Source: plan.md
 - Valid credentials authenticate immediately and open `FormMainShell` without any OTP challenge.
 - Admin sees all navigation modules; Site Manager sees only operational modules for assigned projects.
 **Changelog:**
-- 2026-11-13: Scope change applied per user directive: OTP verification removed; Phase 3 streamlined to direct username/password authentication.
+- 2026-11-13: Phase 3 approved and marked complete. Implemented `PasswordHasher`, `AuthController`, `FormLogin`, `FormMainShell` with role-based UI restriction, and 22 passing automated tests.
 
 ---
 

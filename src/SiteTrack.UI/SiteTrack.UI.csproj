@@ -58,11 +58,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IViews.cs" />
+    <Compile Include="Forms\Dialogs\FormUserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialogs\FormAssignManagerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormMainShell.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\UcUsers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UcProjects.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

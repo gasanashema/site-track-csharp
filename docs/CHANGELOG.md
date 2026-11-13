@@ -5,6 +5,20 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-11-13
+
+### Added
+- **User Controller & Administration**: Implemented `UserController` with role authorization checks (Admin-only guards), password complexity enforcement (minimum 6 characters), self-deactivation protection, and user status toggling.
+- **User Management View (UcUsers)**: Built desktop user administration panel featuring a styled DataGridView with status highlighting (Green for ACTIVE, Red for INACTIVE), full-text search filtering, and action toolbar.
+- **User Creation & Editing Dialog (FormUserDialog)**: Designed modal dialog with comprehensive input validation for name, unique username, unique email, role selection, and optional password update.
+- **Project Controller & Manager Assignment**: Built `ProjectController` with scoping logic (Site Managers only see their assigned sites, Admins see all), project CRUD operations, date sequence validation, and site manager assignment.
+- **Projects View (UcProjects)**: Developed multi-site project management view with status badges (Ongoing, Planning, Completed, Cancelled), manager list displays, search filtering, and role-based action button permissions.
+- **Project Management Dialogs**:
+  - `FormProjectDialog`: Creates and edits projects with start date and optional end date controls.
+  - `FormAssignManagerDialog`: Assigns and removes site managers dynamically for individual construction projects.
+- **Business Rule 5 & Technical Rule 3 Enforcement**: Blocked project deletion when active material stock, usage records, or labor records exist; blocked projects with expected end dates earlier than start dates.
+- **Expanded Test Suite**: Added 8 automated tests to `SiteTrack.Tests` covering user creation, non-admin rejection, short password checks, self-deactivation prevention, project timeline validation, site manager assignment/removal, and child record deletion blocking. All 30 tests in the suite passed with 100% success rate.
+
 ## [0.4.0] - 2026-11-13
 
 ### Added

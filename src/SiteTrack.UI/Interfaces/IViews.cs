@@ -18,3 +18,4 @@ namespace SiteTrack.UI.Interfaces
         void NavigateTo(string moduleName);
     }
 }
+
