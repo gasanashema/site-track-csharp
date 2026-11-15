@@ -125,7 +125,17 @@ namespace SiteTrack.UI.Forms
             btnNavSignOut.Click += BtnNavSignOut_Click;
             pnlSidebar.Controls.Add(btnNavSignOut);
 
+            pnlNavButtons.AutoScroll = true;
             pnlSidebar.Controls.Add(pnlNavButtons);
+
+            // Establish deterministic WinForms docking order inside sidebar (reverse z-order):
+            // 1. pnlBrand docks Top 1st (claims Y: 0..85 for the logo)
+            // 2. btnNavSignOut docks Bottom 2nd (claims Y: Bottom-44..Bottom)
+            // 3. pnlNavButtons docks Fill 3rd (fills Y: 85..Bottom-44 strictly below the brand logo)
+            pnlSidebar.Controls.SetChildIndex(pnlBrand, 2);
+            pnlSidebar.Controls.SetChildIndex(btnNavSignOut, 1);
+            pnlSidebar.Controls.SetChildIndex(pnlNavButtons, 0);
+
             this.Controls.Add(pnlSidebar);
 
             // 2. Top Header Bar

@@ -5,6 +5,16 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-11-15
+
+### Fixed
+- **Sidebar Navigation Docking Z-Order Collision**: Fixed internal docking layout bug inside `pnlSidebar` where `pnlNavButtons` (`DockStyle.Fill`) was docked at index 2 (before `pnlBrand` at index 0), causing `pnlNavButtons` to start at `Y = 0` and position its top buttons ("Dashboard" and "Projects") directly underneath the 85px brand logo panel.
+- **Deterministic Sidebar Z-Order**: Enforced explicit reverse z-order docking hierarchy via `pnlSidebar.Controls.SetChildIndex`:
+  - `pnlBrand`: Set to `ChildIndex = 2` (docks 1st, claiming `Y: 0..85` for the brand logo header).
+  - `btnNavSignOut`: Set to `ChildIndex = 1` (docks 2nd, claiming `Y: Bottom-44..Bottom`).
+  - `pnlNavButtons`: Set to `ChildIndex = 0` (docks 3rd, filling `Y: 85..Bottom-44` strictly below the logo panel).
+  - Enabled `pnlNavButtons.AutoScroll = true` for responsive vertical scrolling.
+
 ## [1.0.1] - 2026-11-15
 
 ### Fixed
