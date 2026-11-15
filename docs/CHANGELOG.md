@@ -5,6 +5,18 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-11-15
+
+### Fixed
+- **WinForms Content Docking & Z-Order Collision**: Fixed critical docking layout bug in `FormMainShell` where `pnlHeader.BringToFront()` and `pnlSidebar.BringToFront()` inadvertently pushed `pnlContent` to higher z-index, causing `pnlContent` to dock across the entire window at `(0, 0)` and render underneath the topbar (top 70px) and sidebar (left 240px).
+- **Deterministic Docking Hierarchy**: Enforced explicit reverse z-order docking hierarchy via `Controls.SetChildIndex`:
+  - `pnlSidebar`: Docked 1st (`ChildIndex = 3`), occupying the entire left column `[0, 0, 240, Height]`.
+  - `statusStrip`: Docked 2nd (`ChildIndex = 2`), occupying bottom row `[240, Height-23, Width-240, 23]`.
+  - `pnlHeader`: Docked 3rd (`ChildIndex = 1`), occupying top row `[240, 0, Width-240, 70]`.
+  - `pnlContent`: Docked 4th (`ChildIndex = 0`), filling the remaining client viewport `[240, 70, Width-240, Height-93]` with zero overlap.
+- **Content Padding & Responsiveness**: Removed duplicate 24px container padding (`pnlContent.Padding = new Padding(0)`) to allow module controls (`UcProjects`, `UcStock`, `UcLabor`, `UcActivities`, `UcReports`, `UcUsers`) to render flush with their own clean padding without clipping or double-margin waste. Enabled `pnlContent.AutoScroll = true`.
+- **Interactive Executive Dashboard**: Enhanced initial landing screen (`Dashboard`) with dynamic live summary cards (Active Construction Sites, Master Materials Catalog, Low Stock Alerts requiring action, Registered Site Craftsmen), a Quick Action navigation toolbar, and an Active Sites overview table.
+
 ## [1.0.0] - 2026-11-13
 
 ### Added

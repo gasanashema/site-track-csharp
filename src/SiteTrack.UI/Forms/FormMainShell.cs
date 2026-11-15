@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using SiteTrack.Controllers;
 using SiteTrack.Core.Models;
+using SiteTrack.Data.Repositories;
 using SiteTrack.UI.Interfaces;
 
 namespace SiteTrack.UI.Forms
@@ -136,6 +138,9 @@ namespace SiteTrack.UI.Forms
                 // Draw bottom border
                 e.Graphics.DrawLine(new Pen(Color.FromArgb(226, 232, 240), 1), 0, pnlHeader.Height - 1, pnlHeader.Width, pnlHeader.Height - 1);
             };
+            pnlHeader.Resize += delegate {
+                lblUserBadge.Location = new Point(pnlHeader.ClientSize.Width - lblUserBadge.Width - 24, 20);
+            };
 
             lblHeaderTitle = new Label();
             lblHeaderTitle.Text = "Dashboard";
@@ -199,13 +204,19 @@ namespace SiteTrack.UI.Forms
             pnlContent = new Panel();
             pnlContent.Dock = DockStyle.Fill;
             pnlContent.BackColor = Color.FromArgb(248, 250, 252);
-            pnlContent.Padding = new Padding(24);
+            pnlContent.Padding = new Padding(0); // View controls manage their internal padding
+            pnlContent.AutoScroll = true;
             this.Controls.Add(pnlContent);
 
-            // Bring header and sidebar to front
-            pnlHeader.BringToFront();
-            pnlSidebar.BringToFront();
-            statusStrip.SendToBack();
+            // Establish deterministic WinForms docking hierarchy (reverse z-order):
+            // 1. pnlSidebar docks Left (claims full left edge from top to bottom)
+            // 2. statusStrip docks Bottom (claims bottom from sidebar to right edge)
+            // 3. pnlHeader docks Top (claims top from sidebar to right edge)
+            // 4. pnlContent docks Fill (occupies remaining rectangle between sidebar, header, and statusStrip)
+            this.Controls.SetChildIndex(pnlSidebar, 3);
+            this.Controls.SetChildIndex(statusStrip, 2);
+            this.Controls.SetChildIndex(pnlHeader, 1);
+            this.Controls.SetChildIndex(pnlContent, 0);
         }
 
         private Button CreateNavButton(string text, int top)
@@ -319,6 +330,11 @@ namespace SiteTrack.UI.Forms
                 return new Controls.UcReports();
             }
 
+            if (string.Equals(module, "Dashboard", StringComparison.OrdinalIgnoreCase))
+            {
+                return CreateDashboardView();
+            }
+
             Panel card = new Panel();
             card.BackColor = Color.White;
             card.BorderStyle = BorderStyle.FixedSingle;
@@ -356,6 +372,229 @@ namespace SiteTrack.UI.Forms
             }
 
             return card;
+        }
+
+        private Control CreateDashboardView()
+        {
+            Panel root = new Panel();
+            root.Dock = DockStyle.Fill;
+            root.BackColor = Color.FromArgb(248, 250, 252);
+            root.Padding = new Padding(20);
+            root.AutoScroll = true;
+
+            // Repositories for live metrics
+            ProjectRepository projRepo = new ProjectRepository();
+            MaterialRepository matRepo = new MaterialRepository();
+            StockRepository stockRepo = new StockRepository();
+            LaborRepository labRepo = new LaborRepository();
+
+            List<Project> projects = BaseController.IsAdmin
+                ? projRepo.GetAll()
+                : (BaseController.CurrentUserId.HasValue ? projRepo.GetByManager(BaseController.CurrentUserId.Value) : new List<Project>());
+
+            int materialCount = matRepo.GetAllMaterials(null).Count;
+            int workerCount = labRepo.GetAllWorkers(null, null).Count;
+            int lowStockCount = 0;
+            foreach (Project p in projects)
+            {
+                List<ProjectMaterialStock> stocks = stockRepo.GetStockByProject(p.Id);
+                lowStockCount += stocks.FindAll(delegate(ProjectMaterialStock s) { return s.IsLowStock; }).Count;
+            }
+
+            // 1. Welcome Header Banner
+            Panel pnlWelcome = new Panel();
+            pnlWelcome.Dock = DockStyle.Top;
+            pnlWelcome.Height = 75;
+            pnlWelcome.BackColor = Color.White;
+            pnlWelcome.BorderStyle = BorderStyle.FixedSingle;
+            pnlWelcome.Padding = new Padding(20, 12, 20, 12);
+
+            Label lblWelcome = new Label();
+            lblWelcome.Text = string.Format("Welcome back, {0}",
+                BaseController.CurrentUser != null ? BaseController.CurrentUser.FullName : "User");
+            lblWelcome.Font = new Font("Segoe UI", 12.5f, FontStyle.Bold);
+            lblWelcome.ForeColor = Color.FromArgb(15, 23, 42);
+            lblWelcome.AutoSize = true;
+            lblWelcome.Location = new Point(18, 12);
+
+            Label lblWelcomeSub = new Label();
+            lblWelcomeSub.Text = string.Format("Role: {0} • {1:dddd, dd MMMM yyyy} • {2} Active Sites Under Management",
+                BaseController.CurrentUser != null ? BaseController.CurrentUser.Role : "Guest",
+                DateTime.Now,
+                projects.Count);
+            lblWelcomeSub.Font = new Font("Segoe UI", 8.5f);
+            lblWelcomeSub.ForeColor = Color.FromArgb(100, 116, 139);
+            lblWelcomeSub.AutoSize = true;
+            lblWelcomeSub.Location = new Point(20, 38);
+
+            pnlWelcome.Controls.Add(lblWelcome);
+            pnlWelcome.Controls.Add(lblWelcomeSub);
+
+            // 2. Metrics Bar (4 Responsive Cards)
+            TableLayoutPanel tlpMetrics = new TableLayoutPanel();
+            tlpMetrics.Dock = DockStyle.Top;
+            tlpMetrics.Height = 110;
+            tlpMetrics.ColumnCount = 4;
+            tlpMetrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+            tlpMetrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+            tlpMetrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+            tlpMetrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+            tlpMetrics.Padding = new Padding(0, 12, 0, 12);
+
+            tlpMetrics.Controls.Add(CreateKpiCard("Active Sites", projects.Count.ToString(), "Managed Construction Sites", Color.FromArgb(37, 99, 235)), 0, 0);
+            tlpMetrics.Controls.Add(CreateKpiCard("Master Materials", materialCount.ToString(), "Catalog Items Registered", Color.FromArgb(13, 148, 136)), 1, 0);
+            tlpMetrics.Controls.Add(CreateKpiCard("Low Stock Alerts", lowStockCount.ToString(), lowStockCount > 0 ? "Requires Reorder Action" : "Stock Levels Healthy", lowStockCount > 0 ? Color.FromArgb(220, 38, 38) : Color.FromArgb(22, 163, 74)), 2, 0);
+            tlpMetrics.Controls.Add(CreateKpiCard("Site Craftsmen", workerCount.ToString(), "Registered Site Workers", Color.FromArgb(124, 58, 237)), 3, 0);
+
+            // 3. Quick Action Shortcut Bar
+            Panel pnlActions = new Panel();
+            pnlActions.Dock = DockStyle.Top;
+            pnlActions.Height = 50;
+            pnlActions.Padding = new Padding(0, 4, 0, 8);
+
+            Button btnActProjects = CreateQuickActionButton("📁 Multi-Site Registry", delegate { NavigateTo("Projects"); });
+            Button btnActStock = CreateQuickActionButton("📦 Materials & Stock", delegate { NavigateTo("Materials & Stock"); });
+            Button btnActLabor = CreateQuickActionButton("👷 Attendance & Wages", delegate { NavigateTo("Labor & Attendance"); });
+            Button btnActProgress = CreateQuickActionButton("📈 Site Activities", delegate { NavigateTo("Site Activities"); });
+            Button btnActReports = CreateQuickActionButton("📊 Reports & Export", delegate { NavigateTo("Reports & Export"); });
+
+            btnActProjects.Location = new Point(0, 6);
+            btnActStock.Location = new Point(175, 6);
+            btnActLabor.Location = new Point(350, 6);
+            btnActProgress.Location = new Point(530, 6);
+            btnActReports.Location = new Point(700, 6);
+
+            pnlActions.Controls.Add(btnActProjects);
+            pnlActions.Controls.Add(btnActStock);
+            pnlActions.Controls.Add(btnActLabor);
+            pnlActions.Controls.Add(btnActProgress);
+            pnlActions.Controls.Add(btnActReports);
+
+            // 4. Projects Table Panel
+            Panel pnlGridSection = new Panel();
+            pnlGridSection.Dock = DockStyle.Fill;
+            pnlGridSection.BackColor = Color.White;
+            pnlGridSection.BorderStyle = BorderStyle.FixedSingle;
+            pnlGridSection.Padding = new Padding(16);
+
+            Label lblGridTitle = new Label();
+            lblGridTitle.Text = "Active Construction Sites (Operational Overview)";
+            lblGridTitle.Font = new Font("Segoe UI", 10.5f, FontStyle.Bold);
+            lblGridTitle.ForeColor = Color.FromArgb(15, 23, 42);
+            lblGridTitle.Dock = DockStyle.Top;
+            lblGridTitle.Height = 28;
+            pnlGridSection.Controls.Add(lblGridTitle);
+
+            DataGridView grid = new DataGridView();
+            grid.Dock = DockStyle.Fill;
+            grid.BackgroundColor = Color.White;
+            grid.BorderStyle = BorderStyle.None;
+            grid.RowHeadersVisible = false;
+            grid.AllowUserToAddRows = false;
+            grid.AllowUserToDeleteRows = false;
+            grid.ReadOnly = true;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.MultiSelect = false;
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            grid.RowTemplate.Height = 36;
+            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            grid.ColumnHeadersHeight = 36;
+            grid.EnableHeadersVisualStyles = false;
+
+            grid.Columns.Add("Id", "ID");
+            grid.Columns["Id"].Width = 45;
+            grid.Columns.Add("ProjectName", "Project Name");
+            grid.Columns.Add("Location", "Site Location");
+            grid.Columns.Add("Status", "Status");
+            grid.Columns.Add("StartDate", "Start Date");
+            grid.Columns.Add("EndDate", "Expected Completion");
+
+            foreach (Project p in projects)
+            {
+                grid.Rows.Add(
+                    p.Id,
+                    p.ProjectName,
+                    p.Location,
+                    p.Status,
+                    p.StartDate.ToString("dd MMM yyyy"),
+                    p.ExpectedEndDate.HasValue ? p.ExpectedEndDate.Value.ToString("dd MMM yyyy") : "-"
+                );
+            }
+
+            pnlGridSection.Controls.Add(grid);
+            grid.BringToFront();
+
+            // Assemble into root container with correct docking hierarchy
+            root.Controls.Add(pnlGridSection);
+            root.Controls.Add(pnlActions);
+            root.Controls.Add(tlpMetrics);
+            root.Controls.Add(pnlWelcome);
+
+            pnlWelcome.SendToBack();
+            tlpMetrics.SendToBack();
+            pnlActions.SendToBack();
+            pnlGridSection.BringToFront();
+
+            return root;
+        }
+
+        private Panel CreateKpiCard(string title, string value, string subtitle, Color accent)
+        {
+            Panel card = new Panel();
+            card.Dock = DockStyle.Fill;
+            card.BackColor = Color.White;
+            card.BorderStyle = BorderStyle.FixedSingle;
+            card.Padding = new Padding(14, 10, 14, 10);
+            card.Margin = new Padding(4);
+
+            Panel accentBar = new Panel();
+            accentBar.Dock = DockStyle.Left;
+            accentBar.Width = 4;
+            accentBar.BackColor = accent;
+            card.Controls.Add(accentBar);
+
+            Label lblVal = new Label();
+            lblVal.Text = value;
+            lblVal.Font = new Font("Segoe UI", 15f, FontStyle.Bold);
+            lblVal.ForeColor = Color.FromArgb(15, 23, 42);
+            lblVal.Location = new Point(14, 6);
+            lblVal.AutoSize = true;
+            card.Controls.Add(lblVal);
+
+            Label lblTit = new Label();
+            lblTit.Text = title;
+            lblTit.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            lblTit.ForeColor = Color.FromArgb(71, 85, 105);
+            lblTit.Location = new Point(16, 36);
+            lblTit.AutoSize = true;
+            card.Controls.Add(lblTit);
+
+            Label lblSub = new Label();
+            lblSub.Text = subtitle;
+            lblSub.Font = new Font("Segoe UI", 8f);
+            lblSub.ForeColor = Color.FromArgb(148, 163, 184);
+            lblSub.Location = new Point(16, 54);
+            lblSub.AutoSize = true;
+            card.Controls.Add(lblSub);
+
+            return card;
+        }
+
+        private Button CreateQuickActionButton(string text, EventHandler onClick)
+        {
+            Button btn = new Button();
+            btn.Text = text;
+            btn.Size = new Size(165, 34);
+            btn.BackColor = Color.White;
+            btn.ForeColor = Color.FromArgb(30, 41, 59);
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
+            btn.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
+            btn.Click += onClick;
+            return btn;
         }
 
         private void ApplyRoleRestrictions()

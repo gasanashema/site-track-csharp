@@ -11,3 +11,4 @@ RUN msbuild SiteTrack.sln /p:Configuration=Release /t:Build
 
 # Default command: execute the automated test runner
 CMD ["mono", "src/SiteTrack.Tests/bin/Release/SiteTrack.Tests.exe"]
+

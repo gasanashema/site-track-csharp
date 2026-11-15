@@ -23,3 +23,4 @@ services:
     volumes:
       - ./docs/001_initial_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
       - ./docs/002_seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql
+
