@@ -5,6 +5,18 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-11-15
+
+### Added
+- **Comprehensive Root Documentation (`README.md`)**: Authored complete, university-grade repository documentation for AUCA DotNet Lab 3 including:
+  - System abstract, problem statement, and solution architecture.
+  - Strict Model-View-Controller (MVC) 5-tier project breakdown.
+  - Complete 16-table relational database schema matrix with primary/foreign key mappings and unique/check constraints.
+  - All 5 Business Validation Rules and 5 Technical Validation Rules detailed with enforcement mechanisms.
+  - Step-by-step instructions on running via precompiled Release executable, PowerShell/MSBuild compilation, Visual Studio, automated test runner, and cross-platform Docker container.
+  - Comprehensive operational module walkthroughs (Multi-Project, Weighted Average Stock Purchases, Usage Guards, Attendance-Gated Wages, 0-100% Progress Tracking, and CSV/Print Reports).
+  - Evaluation credentials and FAQ/troubleshooting guide.
+
 ## [1.0.2] - 2026-11-15
 
 ### Fixed
