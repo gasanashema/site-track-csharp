@@ -162,3 +162,4 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe SiteTrack.sln /p:Con
 # Build and run automated tests in a container
 docker-compose up --build sitetrack-tests
 ```
+

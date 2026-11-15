@@ -10,38 +10,46 @@ namespace SiteTrack.UI
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            bool keepRunning = true;
-            while (keepRunning)
+            try
             {
-                using (FormLogin loginForm = new FormLogin())
-                {
-                    DialogResult loginResult = loginForm.ShowDialog();
-                    if (loginResult != DialogResult.OK)
-                    {
-                        // User cancelled or closed login dialog -> exit application
-                        keepRunning = false;
-                        break;
-                    }
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
 
-                    // User authenticated successfully -> open Main Shell
-                    using (FormMainShell shellForm = new FormMainShell())
+                bool keepRunning = true;
+                while (keepRunning)
+                {
+                    using (FormLogin loginForm = new FormLogin())
                     {
-                        DialogResult shellResult = shellForm.ShowDialog();
-                        if (shellResult == DialogResult.Retry)
+                        DialogResult loginResult = loginForm.ShowDialog();
+                        if (loginResult != DialogResult.OK)
                         {
-                            // Sign Out clicked -> loop back to login form
-                            keepRunning = true;
-                        }
-                        else
-                        {
-                            // Shell closed -> exit application
+                            // User cancelled or closed login dialog -> exit application
                             keepRunning = false;
+                            break;
+                        }
+
+                        // User authenticated successfully -> open Main Shell
+                        using (FormMainShell shellForm = new FormMainShell())
+                        {
+                            DialogResult shellResult = shellForm.ShowDialog();
+                            if (shellResult == DialogResult.Retry)
+                            {
+                                // Sign Out clicked -> loop back to login form
+                                keepRunning = true;
+                            }
+                            else
+                            {
+                                // Shell closed -> exit application
+                                keepRunning = false;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                string errorPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "startup_error.log");
+                System.IO.File.WriteAllText(errorPath, DateTime.Now.ToString("o") + "\r\n" + ex.ToString());
             }
         }
     }
