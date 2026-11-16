@@ -39,9 +39,10 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = _typeId.HasValue ? "Edit Worker Category — SiteTrack" : "Add Worker Category — SiteTrack";
-            this.Size = new Size(460, 360);
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.StartPosition = FormStartPosition.CenterParent;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.BackColor = Color.White;
@@ -53,7 +54,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             // Header Banner
             Panel pnlHeader = new Panel();
             pnlHeader.Dock = DockStyle.Top;
-            pnlHeader.Height = 65;
+            pnlHeader.Height = 75;
             pnlHeader.BackColor = Color.FromArgb(15, 23, 42); // Slate 900
             pnlHeader.Padding = new Padding(20, 12, 20, 12);
 
@@ -74,10 +75,10 @@ namespace SiteTrack.UI.Forms.Dialogs
             pnlHeader.Controls.Add(lblSubtitle);
             this.Controls.Add(pnlHeader);
 
-            int startY = 85;
+            int startY = 90;
             int labelWidth = 140;
             int fieldLeft = 160;
-            int fieldWidth = 250;
+            int fieldWidth = 345;
             int rowHeight = 44;
 
             // 1. Category Name
@@ -131,8 +132,8 @@ namespace SiteTrack.UI.Forms.Dialogs
             btnSave = new Button();
             btnSave.Text = "Save Category";
             btnSave.Location = new Point(fieldLeft, startY);
-            btnSave.Size = new Size(130, 36);
-            btnSave.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnSave.Size = new Size(150, 38);
+            btnSave.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSave.ForeColor = Color.White;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.FlatAppearance.BorderSize = 0;
@@ -143,8 +144,8 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(fieldLeft + 140, startY);
-            btnCancel.Size = new Size(90, 36);
+            btnCancel.Location = new Point(fieldLeft + 160, startY);
+            btnCancel.Size = new Size(95, 38);
             btnCancel.BackColor = Color.FromArgb(241, 245, 249);
             btnCancel.ForeColor = Color.FromArgb(51, 65, 85);
             btnCancel.FlatStyle = FlatStyle.Flat;

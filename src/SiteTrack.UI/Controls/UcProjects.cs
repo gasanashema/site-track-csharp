@@ -51,7 +51,7 @@ namespace SiteTrack.UI.Controls
             btnAdd.Text = "+ New Project";
             btnAdd.Location = new Point(0, 8);
             btnAdd.Size = new Size(115, 36);
-            btnAdd.BackColor = Color.FromArgb(37, 99, 235);
+            btnAdd.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnAdd.ForeColor = Color.White;
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.FlatAppearance.BorderSize = 0;
@@ -152,6 +152,8 @@ namespace SiteTrack.UI.Controls
             gridProjects.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             gridProjects.ColumnHeadersHeight = 40;
             gridProjects.EnableHeadersVisualStyles = false;
+            gridProjects.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            gridProjects.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
 
             gridProjects.Columns.Add("Id", "ID");
             gridProjects.Columns["Id"].Width = 45;

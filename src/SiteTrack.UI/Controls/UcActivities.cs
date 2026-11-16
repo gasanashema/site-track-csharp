@@ -85,7 +85,7 @@ namespace SiteTrack.UI.Controls
             btnLogActivity.Text = "+ Log Site Activity";
             btnLogActivity.Location = new Point(655, 8);
             btnLogActivity.Size = new Size(160, 36);
-            btnLogActivity.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnLogActivity.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnLogActivity.ForeColor = Color.White;
             btnLogActivity.FlatStyle = FlatStyle.Flat;
             btnLogActivity.FlatAppearance.BorderSize = 0;
@@ -134,7 +134,7 @@ namespace SiteTrack.UI.Controls
             lblOverallPercent = new Label();
             lblOverallPercent.Text = "0%";
             lblOverallPercent.Font = new Font("Segoe UI", 16f, FontStyle.Bold);
-            lblOverallPercent.ForeColor = Color.FromArgb(37, 99, 235);
+            lblOverallPercent.ForeColor = Color.FromArgb(235, 86, 18);
             lblOverallPercent.Location = new Point(405, 30);
             lblOverallPercent.AutoSize = true;
             pnlProgressBanner.Controls.Add(lblOverallPercent);
@@ -165,6 +165,8 @@ namespace SiteTrack.UI.Controls
             gridActivities.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             gridActivities.ColumnHeadersHeight = 40;
             gridActivities.EnableHeadersVisualStyles = false;
+            gridActivities.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            gridActivities.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
 
             gridActivities.Columns.Add("Date", "Activity Date");
             gridActivities.Columns["Date"].Width = 110;
@@ -285,7 +287,7 @@ namespace SiteTrack.UI.Controls
                 object val = e.Value;
                 if (val != null)
                 {
-                    e.CellStyle.ForeColor = Color.FromArgb(37, 99, 235); // Blue
+                    e.CellStyle.ForeColor = Color.FromArgb(235, 86, 18); // Main Orange
                     e.CellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
                 }
             }

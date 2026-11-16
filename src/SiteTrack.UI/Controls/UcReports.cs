@@ -122,7 +122,7 @@ namespace SiteTrack.UI.Controls
             btnGenerate.Text = "Generate";
             btnGenerate.Location = new Point(885, 10);
             btnGenerate.Size = new Size(80, 36);
-            btnGenerate.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnGenerate.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnGenerate.ForeColor = Color.White;
             btnGenerate.FlatStyle = FlatStyle.Flat;
             btnGenerate.FlatAppearance.BorderSize = 0;
@@ -166,7 +166,7 @@ namespace SiteTrack.UI.Controls
             pnlMetrics.BackColor = Color.White;
             pnlMetrics.Padding = new Padding(0, 10, 0, 10);
 
-            Panel card1 = CreateMetricCard("Metric 1", out lblMetric1, 0, Color.FromArgb(37, 99, 235));
+            Panel card1 = CreateMetricCard("Metric 1", out lblMetric1, 0, Color.FromArgb(235, 86, 18));
             Panel card2 = CreateMetricCard("Metric 2", out lblMetric2, 220, Color.FromArgb(22, 101, 52), 260);
             Panel card3 = CreateMetricCard("Metric 3", out lblMetric3, 490, Color.FromArgb(185, 28, 28), 260);
 
@@ -193,6 +193,8 @@ namespace SiteTrack.UI.Controls
             gridReport.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             gridReport.ColumnHeadersHeight = 40;
             gridReport.EnableHeadersVisualStyles = false;
+            gridReport.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            gridReport.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
 
             this.Controls.Add(gridReport);
 

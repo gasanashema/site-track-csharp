@@ -31,8 +31,9 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = IsEditMode ? "SiteTrack — Edit Category" : "SiteTrack — Add Material Category";
-            this.Size = new Size(440, 320);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -43,7 +44,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             lblTitle.Text = IsEditMode ? "Edit Material Category" : "New Material Category";
             lblTitle.Font = new Font("Segoe UI", 12f, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(15, 23, 42);
-            lblTitle.Location = new Point(24, 20);
+            lblTitle.Location = new Point(24, 24);
             lblTitle.AutoSize = true;
             this.Controls.Add(lblTitle);
 
@@ -51,53 +52,54 @@ namespace SiteTrack.UI.Forms.Dialogs
             lblName.Text = "Category Name *";
             lblName.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblName.ForeColor = Color.FromArgb(71, 85, 105);
-            lblName.Location = new Point(24, 60);
+            lblName.Location = new Point(24, 75);
             lblName.AutoSize = true;
             this.Controls.Add(lblName);
 
             txtName = new TextBox();
-            txtName.Location = new Point(24, 82);
-            txtName.Size = new Size(376, 26);
+            txtName.Location = new Point(24, 98);
+            txtName.Size = new Size(490, 26);
             this.Controls.Add(txtName);
 
             Label lblDesc = new Label();
-            lblDesc.Text = "Description";
+            lblDesc.Text = "Description & Purpose";
             lblDesc.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblDesc.ForeColor = Color.FromArgb(71, 85, 105);
-            lblDesc.Location = new Point(24, 120);
+            lblDesc.Location = new Point(24, 145);
             lblDesc.AutoSize = true;
             this.Controls.Add(lblDesc);
 
             txtDescription = new TextBox();
             txtDescription.Multiline = true;
-            txtDescription.Location = new Point(24, 142);
-            txtDescription.Size = new Size(376, 50);
+            txtDescription.Location = new Point(24, 168);
+            txtDescription.Size = new Size(490, 80);
             this.Controls.Add(txtDescription);
 
             lblError = new Label();
-            lblError.Location = new Point(24, 200);
-            lblError.Size = new Size(376, 30);
+            lblError.Location = new Point(24, 265);
+            lblError.Size = new Size(490, 30);
             lblError.ForeColor = Color.FromArgb(220, 38, 38);
             lblError.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblError.Visible = false;
             this.Controls.Add(lblError);
 
             btnSave = new Button();
-            btnSave.Text = IsEditMode ? "Save" : "Create";
-            btnSave.Location = new Point(220, 235);
-            btnSave.Size = new Size(95, 34);
-            btnSave.BackColor = Color.FromArgb(37, 99, 235);
+            btnSave.Text = IsEditMode ? "Save Changes" : "Create Category";
+            btnSave.Location = new Point(290, 310);
+            btnSave.Size = new Size(130, 38);
+            btnSave.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSave.ForeColor = Color.White;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.FlatAppearance.BorderSize = 0;
             btnSave.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
+            btnSave.Cursor = Cursors.Hand;
             btnSave.Click += BtnSave_Click;
             this.Controls.Add(btnSave);
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(325, 235);
-            btnCancel.Size = new Size(75, 34);
+            btnCancel.Location = new Point(430, 310);
+            btnCancel.Size = new Size(84, 38);
             btnCancel.BackColor = Color.FromArgb(226, 232, 240);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.FlatAppearance.BorderSize = 0;

@@ -42,8 +42,9 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = "SiteTrack — Record Material Purchase (IN Movement)";
-            this.Size = new Size(500, 530);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -67,7 +68,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             cmbProject = new ComboBox();
             cmbProject.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbProject.Location = new Point(24, y);
-            cmbProject.Size = new Size(436, 26);
+            cmbProject.Size = new Size(490, 26);
             this.Controls.Add(cmbProject);
             y += 35;
 
@@ -77,14 +78,14 @@ namespace SiteTrack.UI.Forms.Dialogs
             cmbMaterial = new ComboBox();
             cmbMaterial.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbMaterial.Location = new Point(24, y);
-            cmbMaterial.Size = new Size(436, 26);
+            cmbMaterial.Size = new Size(490, 26);
             cmbMaterial.SelectedIndexChanged += CmbMaterial_SelectedIndexChanged;
             this.Controls.Add(cmbMaterial);
             y += 35;
 
             // Quantity & Unit
             AddLabel("Purchase Quantity *", 24, y);
-            AddLabel("Unit Price (RWF) *", 240, y);
+            AddLabel("Unit Price (RWF) *", 260, y);
             y += 20;
 
             numQuantity = new NumericUpDown();
@@ -104,8 +105,8 @@ namespace SiteTrack.UI.Forms.Dialogs
             this.Controls.Add(lblUnitDisplay);
 
             numUnitPrice = new NumericUpDown();
-            numUnitPrice.Location = new Point(240, y);
-            numUnitPrice.Size = new Size(220, 26);
+            numUnitPrice.Location = new Point(260, y);
+            numUnitPrice.Size = new Size(254, 26);
             numUnitPrice.Maximum = 100000000m;
             numUnitPrice.DecimalPlaces = 2;
             numUnitPrice.ThousandsSeparator = true;
@@ -116,7 +117,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             // Total Calculation Display Box
             Panel pnlTotal = new Panel();
             pnlTotal.Location = new Point(24, y);
-            pnlTotal.Size = new Size(436, 38);
+            pnlTotal.Size = new Size(490, 38);
             pnlTotal.BackColor = Color.FromArgb(241, 245, 249);
             pnlTotal.BorderStyle = BorderStyle.FixedSingle;
 
@@ -135,7 +136,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtSupplier = new TextBox();
             txtSupplier.Location = new Point(24, y);
-            txtSupplier.Size = new Size(436, 26);
+            txtSupplier.Size = new Size(490, 26);
             this.Controls.Add(txtSupplier);
             y += 35;
 
@@ -145,26 +146,26 @@ namespace SiteTrack.UI.Forms.Dialogs
             dtpPurchaseDate = new DateTimePicker();
             dtpPurchaseDate.Format = DateTimePickerFormat.Short;
             dtpPurchaseDate.Location = new Point(24, y);
-            dtpPurchaseDate.Size = new Size(200, 26);
+            dtpPurchaseDate.Size = new Size(220, 26);
             this.Controls.Add(dtpPurchaseDate);
             y += 35;
 
             // Error Label
             lblError = new Label();
             lblError.Location = new Point(24, y);
-            lblError.Size = new Size(436, 30);
+            lblError.Size = new Size(490, 30);
             lblError.ForeColor = Color.FromArgb(220, 38, 38);
             lblError.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblError.Visible = false;
             this.Controls.Add(lblError);
-            y += 35;
+            y += 40;
 
             // Buttons
             btnRecord = new Button();
             btnRecord.Text = "Record Purchase";
-            btnRecord.Location = new Point(240, y);
-            btnRecord.Size = new Size(130, 36);
-            btnRecord.BackColor = Color.FromArgb(22, 101, 52); // Green 800
+            btnRecord.Location = new Point(270, y);
+            btnRecord.Size = new Size(140, 38);
+            btnRecord.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnRecord.ForeColor = Color.White;
             btnRecord.FlatStyle = FlatStyle.Flat;
             btnRecord.FlatAppearance.BorderSize = 0;
@@ -175,8 +176,8 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(380, y);
-            btnCancel.Size = new Size(80, 36);
+            btnCancel.Location = new Point(420, y);
+            btnCancel.Size = new Size(94, 38);
             btnCancel.BackColor = Color.FromArgb(226, 232, 240);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.FlatAppearance.BorderSize = 0;

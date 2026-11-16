@@ -81,7 +81,7 @@ namespace SiteTrack.UI.Export
             g.DrawString(subText, subFont, subBrush, bounds.Left, y);
             y += 24;
 
-            g.DrawLine(new Pen(Color.FromArgb(148, 163, 184), 1.5f), bounds.Left, y, bounds.Right, y);
+            g.DrawLine(new Pen(Color.FromArgb(235, 86, 18), 2f), bounds.Left, y, bounds.Right, y);
             y += 12;
 
             // Compute Column Widths if not provided

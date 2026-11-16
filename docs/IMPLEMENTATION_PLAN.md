@@ -201,16 +201,26 @@ SiteTrack/
 - [x] Update `VERSION`, `docs/CHANGELOG.md`, and `docs/phase-by-phase-plan.md`.
 - [x] Prepare User Guide & database setup manual for AUCA Lab 3 submission.
 
+### Milestone 11: Orange Theme (#eb5612) & Screen-Filling Form Sizing (v1.1.0)
+- [x] Purge all legacy blue (`#2563EB`) references across WinForms UI controls, headers, dialogs, badges, and grids.
+- [x] Implement brand color `#eb5612` (`Color.FromArgb(235, 86, 18)`) across navigation, primary action buttons, KPI cards, and print rules.
+- [x] Set `FormMainShell` to open maximized (`WindowState = FormWindowState.Maximized`) to fill screen by default.
+- [x] Standardize all 13 modal dialog forms to uniform `560x620` screen-centered windows (`FormStartPosition.CenterScreen`).
+- [x] Verify all 76 unit and integration tests pass with 0 errors/0 warnings.
+
 ---
 
 ## 5. Design & UX Guardrails
-- **Color Palette & Styling**: Professional dark slate sidebar (`#1E293B`), clean content canvas (`#F8FAFC`), crisp data grid formatting with alternating row colors.
+- **Color Palette & Styling**: Professional dark slate sidebar (`#1E293B`), clean content canvas (`#F8FAFC`), vibrant construction brand orange accent (`#EB5612` / `RGB(235, 86, 18)`), crisp data grid formatting with alternating row colors and warm selection tint (`#FFEDD5`).
 - **Visual Feedback**:
   - `ErrorProvider` for input field validation errors.
-  - Color-coded badges for status (e.g. `Ongoing` = Green, `Planning` = Blue, `Completed` = Gray, `Cancelled` = Red).
+  - Color-coded badges for status (e.g. `Ongoing` = Green, `Planning` = Orange/Amber, `Completed` = Gray, `Cancelled` = Red).
   - Amber/Red highlight rows on stock grids when `quantity_available < minimum_quantity`.
   - Confirmation dialogs for destructive actions.
-- **Responsiveness**: Docking and anchoring used systematically across all WinForms controls.
+- **Responsiveness & Sizing**:
+  - Main shell launches maximized to fill display resolution.
+  - Docking and anchoring used systematically across all WinForms controls.
+  - Standardized uniform modal dialog geometry (`560x620`, center-screen).
 - **Status Bar**: Display current logged-in user, active role, database connection status, and current date/time.
 
 ---

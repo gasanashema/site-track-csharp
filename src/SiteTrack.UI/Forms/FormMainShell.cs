@@ -53,9 +53,10 @@ namespace SiteTrack.UI.Forms
         private void InitializeComponent()
         {
             this.Text = "SiteTrack Construction Manager — AUCA DotNet Lab 3";
-            this.Size = new Size(1200, 780);
+            this.Size = new Size(1280, 800);
             this.MinimumSize = new Size(1024, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.WindowState = FormWindowState.Maximized;
             this.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
             this.BackColor = Color.FromArgb(248, 250, 252);
 
@@ -75,7 +76,7 @@ namespace SiteTrack.UI.Forms
             Label lblBrand = new Label();
             lblBrand.Text = "SITETRACK";
             lblBrand.Font = new Font("Segoe UI", 16f, FontStyle.Bold);
-            lblBrand.ForeColor = Color.White;
+            lblBrand.ForeColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             lblBrand.AutoSize = true;
             lblBrand.Location = new Point(18, 16);
 
@@ -267,7 +268,7 @@ namespace SiteTrack.UI.Forms
             {
                 if (string.Equals(b.Tag as string, moduleName, StringComparison.OrdinalIgnoreCase))
                 {
-                    b.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+                    b.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
                     b.ForeColor = Color.White;
                     b.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
                     _activeNavButton = b;
@@ -451,7 +452,7 @@ namespace SiteTrack.UI.Forms
             tlpMetrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
             tlpMetrics.Padding = new Padding(0, 12, 0, 12);
 
-            tlpMetrics.Controls.Add(CreateKpiCard("Active Sites", projects.Count.ToString(), "Managed Construction Sites", Color.FromArgb(37, 99, 235)), 0, 0);
+            tlpMetrics.Controls.Add(CreateKpiCard("Active Sites", projects.Count.ToString(), "Managed Construction Sites", Color.FromArgb(235, 86, 18)), 0, 0);
             tlpMetrics.Controls.Add(CreateKpiCard("Master Materials", materialCount.ToString(), "Catalog Items Registered", Color.FromArgb(13, 148, 136)), 1, 0);
             tlpMetrics.Controls.Add(CreateKpiCard("Low Stock Alerts", lowStockCount.ToString(), lowStockCount > 0 ? "Requires Reorder Action" : "Stock Levels Healthy", lowStockCount > 0 ? Color.FromArgb(220, 38, 38) : Color.FromArgb(22, 163, 74)), 2, 0);
             tlpMetrics.Controls.Add(CreateKpiCard("Site Craftsmen", workerCount.ToString(), "Registered Site Workers", Color.FromArgb(124, 58, 237)), 3, 0);
@@ -512,6 +513,8 @@ namespace SiteTrack.UI.Forms
             grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
             grid.ColumnHeadersHeight = 36;
             grid.EnableHeadersVisualStyles = false;
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            grid.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
 
             grid.Columns.Add("Id", "ID");
             grid.Columns["Id"].Width = 45;
@@ -618,13 +621,13 @@ namespace SiteTrack.UI.Forms
                 if (user.IsAdmin)
                 {
                     lblUserBadge.Text = "ADMINISTRATOR";
-                    lblUserBadge.BackColor = Color.FromArgb(217, 119, 6); // Amber 600
+                    lblUserBadge.BackColor = Color.FromArgb(194, 65, 12); // Deep Amber/Orange 700
                     btnNavUsers.Visible = true;
                 }
                 else
                 {
                     lblUserBadge.Text = "SITE MANAGER";
-                    lblUserBadge.BackColor = Color.FromArgb(2, 132, 199); // Sky 600
+                    lblUserBadge.BackColor = Color.FromArgb(235, 86, 18); // Main Brand Orange #eb5612
                     btnNavUsers.Visible = false; // Hidden for site managers!
                 }
             }

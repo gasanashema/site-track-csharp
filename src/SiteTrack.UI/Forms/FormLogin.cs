@@ -45,7 +45,7 @@ namespace SiteTrack.UI.Forms
         private void InitializeComponent()
         {
             this.Text = "SiteTrack — Authentication";
-            this.Size = new Size(460, 560);
+            this.Size = new Size(500, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -63,7 +63,7 @@ namespace SiteTrack.UI.Forms
             Label lblAppTitle = new Label();
             lblAppTitle.Text = "SITETRACK";
             lblAppTitle.Font = new Font("Segoe UI", 18f, FontStyle.Bold);
-            lblAppTitle.ForeColor = Color.White;
+            lblAppTitle.ForeColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             lblAppTitle.AutoSize = true;
             lblAppTitle.Location = new Point(24, 20);
 
@@ -96,13 +96,13 @@ namespace SiteTrack.UI.Forms
             lblUser.Text = "Username or Email";
             lblUser.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
             lblUser.ForeColor = Color.FromArgb(71, 85, 105);
-            lblUser.Location = new Point(32, 165);
+            lblUser.Location = new Point(40, 165);
             lblUser.AutoSize = true;
             this.Controls.Add(lblUser);
 
             txtUsername = new TextBox();
-            txtUsername.Location = new Point(32, 188);
-            txtUsername.Size = new Size(380, 28);
+            txtUsername.Location = new Point(40, 188);
+            txtUsername.Size = new Size(404, 28);
             txtUsername.Font = new Font("Segoe UI", 10.5f);
             txtUsername.Text = "admin"; // Default demo fill
             this.Controls.Add(txtUsername);
@@ -112,13 +112,13 @@ namespace SiteTrack.UI.Forms
             lblPass.Text = "Password";
             lblPass.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
             lblPass.ForeColor = Color.FromArgb(71, 85, 105);
-            lblPass.Location = new Point(32, 230);
+            lblPass.Location = new Point(40, 230);
             lblPass.AutoSize = true;
             this.Controls.Add(lblPass);
 
             txtPassword = new TextBox();
-            txtPassword.Location = new Point(32, 253);
-            txtPassword.Size = new Size(380, 28);
+            txtPassword.Location = new Point(40, 253);
+            txtPassword.Size = new Size(404, 28);
             txtPassword.Font = new Font("Segoe UI", 10.5f);
             txtPassword.PasswordChar = '●';
             txtPassword.Text = "Admin@123"; // Default demo fill
@@ -134,7 +134,7 @@ namespace SiteTrack.UI.Forms
             // Show Password
             chkShowPassword = new CheckBox();
             chkShowPassword.Text = "Show password";
-            chkShowPassword.Location = new Point(32, 290);
+            chkShowPassword.Location = new Point(40, 290);
             chkShowPassword.AutoSize = true;
             chkShowPassword.ForeColor = Color.FromArgb(100, 116, 139);
             chkShowPassword.CheckedChanged += delegate {
@@ -144,8 +144,8 @@ namespace SiteTrack.UI.Forms
 
             // Error Label
             lblError = new Label();
-            lblError.Location = new Point(32, 320);
-            lblError.Size = new Size(380, 40);
+            lblError.Location = new Point(40, 320);
+            lblError.Size = new Size(404, 40);
             lblError.ForeColor = Color.FromArgb(220, 38, 38); // Red 600
             lblError.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
             lblError.Visible = false;
@@ -154,9 +154,9 @@ namespace SiteTrack.UI.Forms
             // Sign In Button
             btnSignIn = new Button();
             btnSignIn.Text = "Sign In";
-            btnSignIn.Location = new Point(32, 368);
-            btnSignIn.Size = new Size(380, 42);
-            btnSignIn.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnSignIn.Location = new Point(40, 368);
+            btnSignIn.Size = new Size(404, 44);
+            btnSignIn.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSignIn.ForeColor = Color.White;
             btnSignIn.FlatStyle = FlatStyle.Flat;
             btnSignIn.FlatAppearance.BorderSize = 0;
@@ -167,8 +167,8 @@ namespace SiteTrack.UI.Forms
 
             // Demo Fill Bar
             pnlDemo = new Panel();
-            pnlDemo.Location = new Point(32, 425);
-            pnlDemo.Size = new Size(380, 80);
+            pnlDemo.Location = new Point(40, 430);
+            pnlDemo.Size = new Size(404, 85);
             pnlDemo.BackColor = Color.FromArgb(241, 245, 249);
             pnlDemo.BorderStyle = BorderStyle.FixedSingle;
 
@@ -176,15 +176,16 @@ namespace SiteTrack.UI.Forms
             lblDemoHint.Text = "Quick Login (AUCA Evaluation Credentials):";
             lblDemoHint.Font = new Font("Segoe UI", 8f, FontStyle.Bold);
             lblDemoHint.ForeColor = Color.FromArgb(71, 85, 105);
-            lblDemoHint.Location = new Point(8, 6);
+            lblDemoHint.Location = new Point(8, 8);
             lblDemoHint.AutoSize = true;
             pnlDemo.Controls.Add(lblDemoHint);
 
             Button btnDemoAdmin = new Button();
             btnDemoAdmin.Text = "Admin (admin)";
-            btnDemoAdmin.Location = new Point(10, 32);
-            btnDemoAdmin.Size = new Size(170, 32);
-            btnDemoAdmin.BackColor = Color.FromArgb(226, 232, 240);
+            btnDemoAdmin.Location = new Point(10, 34);
+            btnDemoAdmin.Size = new Size(185, 34);
+            btnDemoAdmin.BackColor = Color.FromArgb(254, 237, 213); // Light Orange tint
+            btnDemoAdmin.ForeColor = Color.FromArgb(194, 65, 12);   // Deep Orange
             btnDemoAdmin.FlatStyle = FlatStyle.Flat;
             btnDemoAdmin.FlatAppearance.BorderSize = 0;
             btnDemoAdmin.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
@@ -197,8 +198,8 @@ namespace SiteTrack.UI.Forms
 
             Button btnDemoSiteMgr = new Button();
             btnDemoSiteMgr.Text = "Site Mgr (sitemgr)";
-            btnDemoSiteMgr.Location = new Point(190, 32);
-            btnDemoSiteMgr.Size = new Size(175, 32);
+            btnDemoSiteMgr.Location = new Point(205, 34);
+            btnDemoSiteMgr.Size = new Size(185, 34);
             btnDemoSiteMgr.BackColor = Color.FromArgb(226, 232, 240);
             btnDemoSiteMgr.FlatStyle = FlatStyle.Flat;
             btnDemoSiteMgr.FlatAppearance.BorderSize = 0;

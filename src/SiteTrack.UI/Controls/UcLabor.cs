@@ -140,7 +140,7 @@ namespace SiteTrack.UI.Controls
             btnRecordAttendance.Text = "+ Log Attendance";
             btnRecordAttendance.Location = new Point(545, 8);
             btnRecordAttendance.Size = new Size(140, 36);
-            btnRecordAttendance.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnRecordAttendance.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnRecordAttendance.ForeColor = Color.White;
             btnRecordAttendance.FlatStyle = FlatStyle.Flat;
             btnRecordAttendance.FlatAppearance.BorderSize = 0;
@@ -182,7 +182,7 @@ namespace SiteTrack.UI.Controls
             pnlMetrics.BackColor = Color.White;
             pnlMetrics.Padding = new Padding(0, 10, 0, 10);
 
-            Panel card1 = CreateMetricCard("Total Workers Logged", out lblMetricAttTotal, 0, Color.FromArgb(37, 99, 235));
+            Panel card1 = CreateMetricCard("Total Workers Logged", out lblMetricAttTotal, 0, Color.FromArgb(235, 86, 18));
             Panel card2 = CreateMetricCard("Present Workers", out lblMetricAttPresent, 210, Color.FromArgb(22, 101, 52));
             Panel card3 = CreateMetricCard("Daily Wage Liability", out lblMetricAttLiability, 420, Color.FromArgb(15, 23, 42), 240);
 
@@ -409,7 +409,7 @@ namespace SiteTrack.UI.Controls
             pnlMetrics.BackColor = Color.White;
             pnlMetrics.Padding = new Padding(0, 10, 0, 10);
 
-            Panel card1 = CreateMetricCard("Payment Vouchers", out lblMetricPayCount, 0, Color.FromArgb(37, 99, 235));
+            Panel card1 = CreateMetricCard("Payment Vouchers", out lblMetricPayCount, 0, Color.FromArgb(235, 86, 18));
             Panel card2 = CreateMetricCard("Total Disbursed (Paid)", out lblMetricPayPaid, 210, Color.FromArgb(22, 101, 52), 240);
             Panel card3 = CreateMetricCard("Outstanding Balance", out lblMetricPayDue, 460, Color.FromArgb(220, 38, 38), 240);
 
@@ -465,7 +465,7 @@ namespace SiteTrack.UI.Controls
             btnNewType.Text = "+ Add Skill Category";
             btnNewType.Location = new Point(12, 8);
             btnNewType.Size = new Size(160, 36);
-            btnNewType.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnNewType.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnNewType.ForeColor = Color.White;
             btnNewType.FlatStyle = FlatStyle.Flat;
             btnNewType.FlatAppearance.BorderSize = 0;
@@ -554,6 +554,8 @@ namespace SiteTrack.UI.Controls
             grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             grid.ColumnHeadersHeight = 40;
             grid.EnableHeadersVisualStyles = false;
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            grid.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
             return grid;
         }
 

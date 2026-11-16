@@ -35,8 +35,9 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = IsEditMode ? "SiteTrack — Edit User" : "SiteTrack — Add New User";
-            this.Size = new Size(460, 480);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -59,7 +60,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtFullName = new TextBox();
             txtFullName.Location = new Point(24, y);
-            txtFullName.Size = new Size(396, 26);
+            txtFullName.Size = new Size(490, 26);
             this.Controls.Add(txtFullName);
             y += 35;
 
@@ -68,7 +69,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtUsername = new TextBox();
             txtUsername.Location = new Point(24, y);
-            txtUsername.Size = new Size(396, 26);
+            txtUsername.Size = new Size(490, 26);
             this.Controls.Add(txtUsername);
             y += 35;
 
@@ -77,7 +78,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtEmail = new TextBox();
             txtEmail.Location = new Point(24, y);
-            txtEmail.Size = new Size(396, 26);
+            txtEmail.Size = new Size(490, 26);
             this.Controls.Add(txtEmail);
             y += 35;
 
@@ -86,53 +87,45 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtPassword = new TextBox();
             txtPassword.Location = new Point(24, y);
-            txtPassword.Size = new Size(396, 26);
+            txtPassword.Size = new Size(490, 26);
             txtPassword.PasswordChar = '●';
             this.Controls.Add(txtPassword);
             y += 35;
 
             // Role
             AddLabel("System Role *", 24, y);
+            AddLabel("Phone Number", 270, y);
             y += 20;
             cmbRole = new ComboBox();
             cmbRole.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbRole.Items.AddRange(new object[] { "SiteManager", "Administrator" });
             cmbRole.SelectedIndex = 0;
             cmbRole.Location = new Point(24, y);
-            cmbRole.Size = new Size(190, 26);
+            cmbRole.Size = new Size(230, 26);
             this.Controls.Add(cmbRole);
 
-            // Phone
-            Label lblPhone = new Label();
-            lblPhone.Text = "Phone Number";
-            lblPhone.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
-            lblPhone.ForeColor = Color.FromArgb(71, 85, 105);
-            lblPhone.Location = new Point(230, y - 20);
-            lblPhone.AutoSize = true;
-            this.Controls.Add(lblPhone);
-
             txtPhone = new TextBox();
-            txtPhone.Location = new Point(230, y);
-            txtPhone.Size = new Size(190, 26);
+            txtPhone.Location = new Point(270, y);
+            txtPhone.Size = new Size(244, 26);
             this.Controls.Add(txtPhone);
-            y += 40;
+            y += 45;
 
             // Error Label
             lblError = new Label();
             lblError.Location = new Point(24, y);
-            lblError.Size = new Size(396, 35);
+            lblError.Size = new Size(490, 35);
             lblError.ForeColor = Color.FromArgb(220, 38, 38);
             lblError.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblError.Visible = false;
             this.Controls.Add(lblError);
-            y += 40;
+            y += 45;
 
             // Action Buttons
             btnSave = new Button();
             btnSave.Text = IsEditMode ? "Update User" : "Create User";
-            btnSave.Location = new Point(220, y);
-            btnSave.Size = new Size(110, 36);
-            btnSave.BackColor = Color.FromArgb(37, 99, 235);
+            btnSave.Location = new Point(290, y);
+            btnSave.Size = new Size(130, 38);
+            btnSave.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSave.ForeColor = Color.White;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.FlatAppearance.BorderSize = 0;
@@ -143,8 +136,8 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(340, y);
-            btnCancel.Size = new Size(80, 36);
+            btnCancel.Location = new Point(430, y);
+            btnCancel.Size = new Size(84, 38);
             btnCancel.BackColor = Color.FromArgb(226, 232, 240);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.FlatAppearance.BorderSize = 0;
