@@ -71,11 +71,12 @@ namespace SiteTrack.UI.Controls
             btnAddMaterial.Text = "+ Add Material";
             btnAddMaterial.Location = new Point(0, 8);
             btnAddMaterial.Size = new Size(115, 36);
-            btnAddMaterial.BackColor = Color.FromArgb(37, 99, 235);
+            btnAddMaterial.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnAddMaterial.ForeColor = Color.White;
             btnAddMaterial.FlatStyle = FlatStyle.Flat;
             btnAddMaterial.FlatAppearance.BorderSize = 0;
             btnAddMaterial.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            btnAddMaterial.Cursor = Cursors.Hand;
             btnAddMaterial.Click += BtnAddMaterial_Click;
             pnlMatToolbar.Controls.Add(btnAddMaterial);
 
@@ -183,11 +184,12 @@ namespace SiteTrack.UI.Controls
             btnAddCategory.Text = "+ Add Category";
             btnAddCategory.Location = new Point(0, 8);
             btnAddCategory.Size = new Size(120, 36);
-            btnAddCategory.BackColor = Color.FromArgb(37, 99, 235);
+            btnAddCategory.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnAddCategory.ForeColor = Color.White;
             btnAddCategory.FlatStyle = FlatStyle.Flat;
             btnAddCategory.FlatAppearance.BorderSize = 0;
             btnAddCategory.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            btnAddCategory.Cursor = Cursors.Hand;
             btnAddCategory.Click += BtnAddCategory_Click;
             pnlCatToolbar.Controls.Add(btnAddCategory);
 
@@ -268,6 +270,8 @@ namespace SiteTrack.UI.Controls
             grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             grid.ColumnHeadersHeight = 40;
             grid.EnableHeadersVisualStyles = false;
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            grid.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
             return grid;
         }
 

@@ -49,9 +49,10 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = "Stock Inventory Adjustment — SiteTrack";
-            this.Size = new Size(500, 520);
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.StartPosition = FormStartPosition.CenterParent;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.BackColor = Color.White;
@@ -63,7 +64,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             // Header Banner
             Panel pnlHeader = new Panel();
             pnlHeader.Dock = DockStyle.Top;
-            pnlHeader.Height = 70;
+            pnlHeader.Height = 75;
             pnlHeader.BackColor = Color.FromArgb(30, 41, 59); // Slate 800
             pnlHeader.Padding = new Padding(20, 12, 20, 12);
 
@@ -84,10 +85,10 @@ namespace SiteTrack.UI.Forms.Dialogs
             pnlHeader.Controls.Add(lblSubtitle);
             this.Controls.Add(pnlHeader);
 
-            int startY = 85;
+            int startY = 90;
             int labelWidth = 140;
             int fieldLeft = 160;
-            int fieldWidth = 290;
+            int fieldWidth = 345;
             int rowHeight = 44;
 
             // 1. Project
@@ -181,8 +182,8 @@ namespace SiteTrack.UI.Forms.Dialogs
             btnSave = new Button();
             btnSave.Text = "Apply Adjustment";
             btnSave.Location = new Point(fieldLeft, startY);
-            btnSave.Size = new Size(160, 36);
-            btnSave.BackColor = Color.FromArgb(37, 99, 235); // Blue 600
+            btnSave.Size = new Size(165, 38);
+            btnSave.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSave.ForeColor = Color.White;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.FlatAppearance.BorderSize = 0;
@@ -193,8 +194,8 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(fieldLeft + 170, startY);
-            btnCancel.Size = new Size(95, 36);
+            btnCancel.Location = new Point(fieldLeft + 175, startY);
+            btnCancel.Size = new Size(95, 38);
             btnCancel.BackColor = Color.FromArgb(241, 245, 249);
             btnCancel.ForeColor = Color.FromArgb(51, 65, 85);
             btnCancel.FlatStyle = FlatStyle.Flat;

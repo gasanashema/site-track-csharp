@@ -5,6 +5,25 @@ All notable changes to the **SiteTrack Construction Manager** project will be do
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-16
+
+### Changed
+- **Brand Palette Theme Overhaul (`#eb5612`)**:
+  - Replaced Tailwind Blue 600 (`#2563EB`) and all sky/blue accent colors across the entire desktop application with vibrant construction safety orange `#eb5612` (`Color.FromArgb(235, 86, 18)`).
+  - Main Window: Updated brand logo title, active sidebar navigation highlights, Executive Dashboard "Active Sites" KPI card, Site Manager role badges, and DataGridView row selection highlights (soft warm orange `#FEF08A` / `#FFEDD5` tint with dark slate text).
+  - Login Window: Styled brand header and primary "Sign In" button with `#eb5612` and warm orange demo helper actions.
+  - All 8 Module Controls (`UcProjects`, `UcStock`, `UcLabor`, `UcActivities`, `UcMaterials`, `UcMaterialUsage`, `UcReports`, `UcUsers`): Updated primary action buttons ("+ New Project", "+ Log Purchase", "+ Record Attendance", "+ Log Daily Activity", "+ Add Material", "+ Add Category", "+ Add User", "Generate Report"), progress completion indicators, and metric highlight cards to `#eb5612`.
+  - Report Engine (`PrintReportHelper`): Updated document header divider rule to `#eb5612` (2px pen).
+
+### Enhanced
+- **Full-Screen Responsive Main Shell**:
+  - Configured `FormMainShell` to open maximized (`WindowState = FormWindowState.Maximized`) on launch, filling the screen smoothly without manual resizing.
+  - Retained deterministic sidebar and topbar docking z-order so content sections dynamically scale and fill the screen without clipping.
+- **Standardized Screen-Filling Modal Dialogs**:
+  - Standardized all 13 dialog forms (`FormProjectDialog`, `FormPurchaseDialog`, `FormUsageDialog`, `FormAdjustmentDialog`, `FormCategoryDialog`, `FormMaterialDialog`, `FormWorkerDialog`, `FormWorkerTypeDialog`, `FormAttendanceDialog`, `FormPaymentDialog`, `FormActivityDialog`, `FormUserDialog`, `FormAssignManagerDialog`) to a uniform, comfortable dimension (`Size = new Size(560, 620)` with matching `MinimumSize`).
+  - Set all dialogs to center automatically on screen (`StartPosition = FormStartPosition.CenterScreen`).
+  - Standardized all primary modal submission buttons to `#eb5612` with consistent height, font weights, and spacing.
+
 ## [1.0.3] - 2026-11-15
 
 ### Added

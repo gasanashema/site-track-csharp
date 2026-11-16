@@ -140,7 +140,7 @@ namespace SiteTrack.UI.Controls
             pnlMetrics.BackColor = Color.White;
             pnlMetrics.Padding = new Padding(0, 10, 0, 10);
 
-            Panel card1 = CreateMetricCard("Items Stocked", out lblMetricItems, 0, Color.FromArgb(37, 99, 235));
+            Panel card1 = CreateMetricCard("Items Stocked", out lblMetricItems, 0, Color.FromArgb(235, 86, 18));
             Panel card2 = CreateMetricCard("Low Stock Alerts", out lblMetricLowStock, 210, Color.FromArgb(220, 38, 38));
             Panel card3 = CreateMetricCard("Total Stock Valuation", out lblMetricValuation, 420, Color.FromArgb(15, 23, 42), 260);
 
@@ -296,6 +296,8 @@ namespace SiteTrack.UI.Controls
             grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             grid.ColumnHeadersHeight = 40;
             grid.EnableHeadersVisualStyles = false;
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            grid.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
             return grid;
         }
 
@@ -338,7 +340,7 @@ namespace SiteTrack.UI.Controls
                     }
                     else if (str == "ADJUSTMENT")
                     {
-                        e.CellStyle.ForeColor = Color.FromArgb(37, 99, 235); // Blue
+                        e.CellStyle.ForeColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
                         e.CellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
                     }
                 }

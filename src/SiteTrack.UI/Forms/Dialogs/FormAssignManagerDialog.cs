@@ -33,8 +33,9 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = "SiteTrack — Manage Site Managers";
-            this.Size = new Size(500, 460);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -43,70 +44,72 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             Label lblTitle = new Label();
             lblTitle.Text = string.Format("Managers for: {0}", _project != null ? _project.ProjectName : "");
-            lblTitle.Font = new Font("Segoe UI", 11.5f, FontStyle.Bold);
+            lblTitle.Font = new Font("Segoe UI", 12f, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(15, 23, 42);
-            lblTitle.Location = new Point(20, 16);
-            lblTitle.Size = new Size(440, 25);
+            lblTitle.Location = new Point(24, 20);
+            lblTitle.Size = new Size(500, 28);
             this.Controls.Add(lblTitle);
 
             Label lblList = new Label();
             lblList.Text = "Assigned Site Managers:";
             lblList.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblList.ForeColor = Color.FromArgb(71, 85, 105);
-            lblList.Location = new Point(20, 50);
+            lblList.Location = new Point(24, 55);
             lblList.AutoSize = true;
             this.Controls.Add(lblList);
 
             lstManagers = new ListBox();
-            lstManagers.Location = new Point(20, 72);
-            lstManagers.Size = new Size(440, 170);
+            lstManagers.Location = new Point(24, 78);
+            lstManagers.Size = new Size(500, 210);
             lstManagers.Font = new Font("Segoe UI", 10f);
             this.Controls.Add(lstManagers);
 
             btnRemove = new Button();
             btnRemove.Text = "Remove Selected Manager";
-            btnRemove.Location = new Point(20, 252);
-            btnRemove.Size = new Size(200, 32);
+            btnRemove.Location = new Point(24, 298);
+            btnRemove.Size = new Size(200, 36);
             btnRemove.BackColor = Color.FromArgb(254, 226, 226); // Red 100
             btnRemove.ForeColor = Color.FromArgb(185, 28, 28);   // Red 700
             btnRemove.FlatStyle = FlatStyle.Flat;
             btnRemove.FlatAppearance.BorderSize = 0;
             btnRemove.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
+            btnRemove.Cursor = Cursors.Hand;
             btnRemove.Click += BtnRemove_Click;
             this.Controls.Add(btnRemove);
 
             // Add New Manager Section
             GroupBox grpAdd = new GroupBox();
             grpAdd.Text = "Assign New Site Manager";
-            grpAdd.Location = new Point(20, 295);
-            grpAdd.Size = new Size(440, 75);
+            grpAdd.Location = new Point(24, 350);
+            grpAdd.Size = new Size(500, 95);
             grpAdd.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             grpAdd.ForeColor = Color.FromArgb(71, 85, 105);
 
             cmbAvailableUsers = new ComboBox();
             cmbAvailableUsers.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbAvailableUsers.Location = new Point(12, 28);
-            cmbAvailableUsers.Size = new Size(280, 26);
+            cmbAvailableUsers.Location = new Point(16, 36);
+            cmbAvailableUsers.Size = new Size(310, 26);
             cmbAvailableUsers.Font = new Font("Segoe UI", 9.5f);
             grpAdd.Controls.Add(cmbAvailableUsers);
 
             btnAssign = new Button();
             btnAssign.Text = "Assign Manager";
-            btnAssign.Location = new Point(300, 26);
-            btnAssign.Size = new Size(125, 30);
-            btnAssign.BackColor = Color.FromArgb(37, 99, 235);
+            btnAssign.Location = new Point(340, 32);
+            btnAssign.Size = new Size(140, 34);
+            btnAssign.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnAssign.ForeColor = Color.White;
             btnAssign.FlatStyle = FlatStyle.Flat;
             btnAssign.FlatAppearance.BorderSize = 0;
             btnAssign.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
+            btnAssign.Cursor = Cursors.Hand;
             btnAssign.Click += BtnAssign_Click;
             grpAdd.Controls.Add(btnAssign);
 
             this.Controls.Add(grpAdd);
 
             lblError = new Label();
-            lblError.Location = new Point(20, 375);
-            lblError.Size = new Size(340, 30);
+            lblError.Location = new Point(24, 465);
+            lblError.Size = new Size(380, 30);
             lblError.ForeColor = Color.FromArgb(220, 38, 38);
             lblError.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblError.Visible = false;
@@ -114,11 +117,13 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             btnClose = new Button();
             btnClose.Text = "Close";
-            btnClose.Location = new Point(370, 375);
-            btnClose.Size = new Size(90, 32);
+            btnClose.Location = new Point(420, 465);
+            btnClose.Size = new Size(104, 38);
             btnClose.BackColor = Color.FromArgb(226, 232, 240);
             btnClose.FlatStyle = FlatStyle.Flat;
             btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
+            btnClose.Cursor = Cursors.Hand;
             btnClose.Click += delegate { this.Close(); };
             this.Controls.Add(btnClose);
         }

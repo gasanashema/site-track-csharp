@@ -36,8 +36,9 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = IsEditMode ? "SiteTrack — Edit Project" : "SiteTrack — Create New Project";
-            this.Size = new Size(520, 520);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -60,7 +61,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtName = new TextBox();
             txtName.Location = new Point(24, y);
-            txtName.Size = new Size(456, 26);
+            txtName.Size = new Size(490, 26);
             this.Controls.Add(txtName);
             y += 35;
 
@@ -69,7 +70,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtLocation = new TextBox();
             txtLocation.Location = new Point(24, y);
-            txtLocation.Size = new Size(456, 26);
+            txtLocation.Size = new Size(490, 26);
             this.Controls.Add(txtLocation);
             y += 35;
 
@@ -79,7 +80,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             txtDescription = new TextBox();
             txtDescription.Multiline = true;
             txtDescription.Location = new Point(24, y);
-            txtDescription.Size = new Size(456, 55);
+            txtDescription.Size = new Size(490, 55);
             this.Controls.Add(txtDescription);
             y += 65;
 
@@ -88,17 +89,17 @@ namespace SiteTrack.UI.Forms.Dialogs
             dtpStart = new DateTimePicker();
             dtpStart.Format = DateTimePickerFormat.Short;
             dtpStart.Location = new Point(24, y + 20);
-            dtpStart.Size = new Size(200, 26);
+            dtpStart.Size = new Size(230, 26);
             this.Controls.Add(dtpStart);
 
             // Status
-            AddLabel("Project Status *", 260, y);
+            AddLabel("Project Status *", 280, y);
             cmbStatus = new ComboBox();
             cmbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbStatus.Items.AddRange(new object[] { "Planning", "Ongoing", "Completed", "Cancelled" });
             cmbStatus.SelectedIndex = 0;
-            cmbStatus.Location = new Point(260, y + 20);
-            cmbStatus.Size = new Size(220, 26);
+            cmbStatus.Location = new Point(280, y + 20);
+            cmbStatus.Size = new Size(234, 26);
             this.Controls.Add(cmbStatus);
             y += 60;
 
@@ -126,19 +127,19 @@ namespace SiteTrack.UI.Forms.Dialogs
             // Error Label
             lblError = new Label();
             lblError.Location = new Point(24, y);
-            lblError.Size = new Size(456, 35);
+            lblError.Size = new Size(490, 35);
             lblError.ForeColor = Color.FromArgb(220, 38, 38);
             lblError.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblError.Visible = false;
             this.Controls.Add(lblError);
-            y += 40;
+            y += 45;
 
             // Action Buttons
             btnSave = new Button();
             btnSave.Text = IsEditMode ? "Save Changes" : "Create Project";
-            btnSave.Location = new Point(260, y);
-            btnSave.Size = new Size(120, 36);
-            btnSave.BackColor = Color.FromArgb(37, 99, 235);
+            btnSave.Location = new Point(280, y);
+            btnSave.Size = new Size(130, 38);
+            btnSave.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSave.ForeColor = Color.White;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.FlatAppearance.BorderSize = 0;
@@ -149,8 +150,8 @@ namespace SiteTrack.UI.Forms.Dialogs
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(390, y);
-            btnCancel.Size = new Size(90, 36);
+            btnCancel.Location = new Point(420, y);
+            btnCancel.Size = new Size(94, 38);
             btnCancel.BackColor = Color.FromArgb(226, 232, 240);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.FlatAppearance.BorderSize = 0;

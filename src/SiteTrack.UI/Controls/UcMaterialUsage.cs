@@ -131,7 +131,7 @@ namespace SiteTrack.UI.Controls
             pnlMetrics.BackColor = Color.White;
             pnlMetrics.Padding = new Padding(0, 10, 0, 10);
 
-            Panel card1 = CreateMetricCard("Usage Entries", out lblMetricCount, 0, Color.FromArgb(37, 99, 235));
+            Panel card1 = CreateMetricCard("Usage Entries", out lblMetricCount, 0, Color.FromArgb(235, 86, 18));
             Panel card2 = CreateMetricCard("Total Consumption Value", out lblMetricCost, 210, Color.FromArgb(185, 28, 28), 240);
             Panel card3 = CreateMetricCard("Distinct Materials", out lblMetricMaterials, 460, Color.FromArgb(15, 23, 42));
 
@@ -177,6 +177,8 @@ namespace SiteTrack.UI.Controls
             gridUsage.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             gridUsage.ColumnHeadersHeight = 40;
             gridUsage.EnableHeadersVisualStyles = false;
+            gridUsage.DefaultCellStyle.SelectionBackColor = Color.FromArgb(254, 237, 213);
+            gridUsage.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
 
             gridUsage.Columns.Add("Date", "Usage Date");
             gridUsage.Columns["Date"].Width = 105;

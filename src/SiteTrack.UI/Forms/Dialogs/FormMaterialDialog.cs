@@ -37,8 +37,9 @@ namespace SiteTrack.UI.Forms.Dialogs
         private void InitializeComponent()
         {
             this.Text = IsEditMode ? "SiteTrack — Edit Material" : "SiteTrack — Add Master Material";
-            this.Size = new Size(480, 520);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Size = new Size(560, 620);
+            this.MinimumSize = new Size(560, 620);
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -62,7 +63,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             cmbCategory = new ComboBox();
             cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbCategory.Location = new Point(24, y);
-            cmbCategory.Size = new Size(416, 26);
+            cmbCategory.Size = new Size(490, 26);
             this.Controls.Add(cmbCategory);
             y += 35;
 
@@ -71,24 +72,24 @@ namespace SiteTrack.UI.Forms.Dialogs
             y += 20;
             txtName = new TextBox();
             txtName.Location = new Point(24, y);
-            txtName.Size = new Size(416, 26);
+            txtName.Size = new Size(490, 26);
             this.Controls.Add(txtName);
             y += 35;
 
             // Unit of Measurement & Reference Price
             AddLabel("Unit (e.g. Bags, Tons, Pieces) *", 24, y);
-            AddLabel("Reference Unit Price (RWF)", 240, y);
+            AddLabel("Reference Unit Price (RWF)", 270, y);
             y += 20;
 
             txtUnit = new TextBox();
             txtUnit.Location = new Point(24, y);
-            txtUnit.Size = new Size(200, 26);
+            txtUnit.Size = new Size(230, 26);
             txtUnit.Text = "Bags";
             this.Controls.Add(txtUnit);
 
             numPrice = new NumericUpDown();
-            numPrice.Location = new Point(240, y);
-            numPrice.Size = new Size(200, 26);
+            numPrice.Location = new Point(270, y);
+            numPrice.Size = new Size(244, 26);
             numPrice.Maximum = 100000000m;
             numPrice.DecimalPlaces = 2;
             numPrice.ThousandsSeparator = true;
@@ -101,7 +102,7 @@ namespace SiteTrack.UI.Forms.Dialogs
             txtDescription = new TextBox();
             txtDescription.Multiline = true;
             txtDescription.Location = new Point(24, y);
-            txtDescription.Size = new Size(416, 50);
+            txtDescription.Size = new Size(490, 50);
             this.Controls.Add(txtDescription);
             y += 60;
 
@@ -113,37 +114,38 @@ namespace SiteTrack.UI.Forms.Dialogs
             cmbStatus.Items.AddRange(new object[] { "ACTIVE", "INACTIVE" });
             cmbStatus.SelectedIndex = 0;
             cmbStatus.Location = new Point(24, y);
-            cmbStatus.Size = new Size(200, 26);
+            cmbStatus.Size = new Size(230, 26);
             this.Controls.Add(cmbStatus);
             y += 40;
 
             // Error Label
             lblError = new Label();
             lblError.Location = new Point(24, y);
-            lblError.Size = new Size(416, 30);
+            lblError.Size = new Size(490, 30);
             lblError.ForeColor = Color.FromArgb(220, 38, 38);
             lblError.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             lblError.Visible = false;
             this.Controls.Add(lblError);
-            y += 35;
+            y += 45;
 
             // Buttons
             btnSave = new Button();
             btnSave.Text = IsEditMode ? "Save Material" : "Create Material";
-            btnSave.Location = new Point(230, y);
-            btnSave.Size = new Size(125, 34);
-            btnSave.BackColor = Color.FromArgb(37, 99, 235);
+            btnSave.Location = new Point(290, y);
+            btnSave.Size = new Size(130, 38);
+            btnSave.BackColor = Color.FromArgb(235, 86, 18); // Main #eb5612 Brand Orange
             btnSave.ForeColor = Color.White;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.FlatAppearance.BorderSize = 0;
             btnSave.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
+            btnSave.Cursor = Cursors.Hand;
             btnSave.Click += BtnSave_Click;
             this.Controls.Add(btnSave);
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(365, y);
-            btnCancel.Size = new Size(75, 34);
+            btnCancel.Location = new Point(430, y);
+            btnCancel.Size = new Size(84, 38);
             btnCancel.BackColor = Color.FromArgb(226, 232, 240);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.FlatAppearance.BorderSize = 0;
